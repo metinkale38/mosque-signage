@@ -1,0 +1,4 @@
+@reboot         crontab /boot/www/scripts/crontab
+@reboot         python /boot/www/scripts/server.py
+*/10 * * * *     python /boot/www/scripts/sync.py
+0   3 * * *     reboot

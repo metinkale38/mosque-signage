@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media (orientation: landscape) {
+  .grid-cols-custom{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  html{
+    font-size: 1vmin;
+  }
+}
+
+@media (orientation: portrait) {
+  .grid-cols-custom{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  html{
+    font-size: 1.1vmin;
+  }
+}
+
+html {
+  letter-spacing: 0;
+}
+
+body {
+  margin: 0;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+
+.preventBurnInMove {
+  animation: move 100s forwards infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes move {
+    from {  transform: rotate(0deg) translateX(5px) rotate(0deg); }
+    to   {  transform: rotate(360deg) translateX(5px) rotate(-360deg); }
+}
+
+.preventBurnInHue {
+  animation: hueRotate 250s forwards infinite;
+  animation-timing-function: linear;
+}
+@keyframes hueRotate {
+    0% {  filter: hue-rotate(25deg) grayscale(0); }
+    25%   {  filter: hue-rotate(-25deg) grayscale(0); }
+    50% {  filter: hue-rotate(25deg) grayscale(1); }
+    75%   {  filter: hue-rotate(-25deg) grayscale(0); }
+    100% {  filter: hue-rotate(25deg) grayscale(0); }
+}
