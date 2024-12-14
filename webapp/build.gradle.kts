@@ -22,7 +22,8 @@ tasks.register("npmBuildStatic") {
 
         File(buildDir, "hash.php").writeText(
             project.layout.buildDirectory.asFileTree.map {
-                "/" + it.toRelativeString(buildDir).replace("\\", "/") + "=" + it.md5Digest().toHexString()
+                "/" + it.toRelativeString(buildDir).replace("\\", "/") + "=" + it.md5Digest()
+                    .toHexString()
             }.joinToString("\n")
         )
     }
