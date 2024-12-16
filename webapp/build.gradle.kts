@@ -3,7 +3,8 @@ import org.jetbrains.kotlin.daemon.common.toHexString
 import org.jetbrains.kotlin.daemon.md5Digest
 
 plugins {
-    id("com.github.node-gradle.node")
+    id("com.github.node-gradle.node") version "7.1.0"
+    alias(libs.plugins.kotlin.compose)
 }
 
 tasks.register<NpmTask>("npmBuild") {

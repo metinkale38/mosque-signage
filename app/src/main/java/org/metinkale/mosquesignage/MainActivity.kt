@@ -1,7 +1,10 @@
 package org.metinkale.mosquesignage
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.ConsoleMessage
@@ -11,33 +14,45 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import java.io.File
+import java.util.UUID
 
-lateinit var www: File
 
 class MainActivity : ComponentActivity() {
-    lateinit var screenControl: ScreenControl;
-    val webServer = WebServer()
 
-    val handler = Handler()
+
+    val www: File by lazy { File(filesDir, "www") }
+    val screenControl: ScreenControl by lazy { ScreenControl(this) }
+    val webServer: WebServer by lazy { WebServer(www) }
+
+    val prefs: SharedPreferences by lazy { getSharedPreferences("prefs", MODE_PRIVATE) }
+    val config: String by lazy { prefs.getString("config", "")!! }
+    val installationId by lazy {
+        prefs.getString("installationId", null) ?: let {
+            UUID.randomUUID().toString().also { prefs.edit().putString("installationId", it).apply() }
+        }
+    }
+    val remoteHost: String
+        get() = config.takeIf { it.startsWith("http") }?.substringBefore("?")
+            ?: "https://metinkale38.github.io/mosque-signage"
+
+    val query: String get() = if (config.contains("?") == true) config.substringAfter("?") else config
+    val hostname: String by lazy { "android-$query-$installationId" }
+
+
+    val handler = Handler(Looper.getMainLooper())
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        www = File(filesDir, "www")
-        screenControl = ScreenControl(this);
-
         window.addFlags(View.KEEP_SCREEN_ON)
 
-        webServer.start()
-
-        sync()
-
-        val config = getSharedPreferences("prefs", MODE_PRIVATE).getString("config", null)
-
-        if (config == null) {
+        if (config.isEmpty()) {
             askConfigDialog()
         } else {
+            webServer.start()
             setContent {
-                WebView(config);
+                WebView(query)
             }
         }
     }
@@ -49,26 +64,33 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        sync()
+        syncAsync()
     }
 
     override fun onPause() {
-        handler.removeCallbacks(sync)
+        handler.removeCallbacks(syncAsync)
         super.onPause()
     }
 
-    val sync: () -> Unit = {
-        Thread {
-            if (sync(this)) runOnUiThread { recreate() }
-        }.start()
+    val syncAsync: () -> Unit = {
+        if (config.isNotEmpty()) {
+            lifecycleScope.launch {
+                if (sync(remoteHost, www, hostname)) runOnUiThread {
+                    reload()
+                }
+            }
+        }
 
-        handler.postDelayed(sync, 1000 * 60 * 5)
+        handler.postDelayed(syncAsync, 1000 * 60 * 5)
     }
 
+    var reload: () -> Unit = {}
+
     @Composable
-    fun WebView(config: String) {
+    fun WebView(query: String) {
         AndroidView(factory = {
             WebView(it).apply {
+                reload = { reload() }
                 settings.javaScriptEnabled = true
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
@@ -76,7 +98,7 @@ class MainActivity : ComponentActivity() {
 
                 webChromeClient = object : WebChromeClient() {
                     override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                        android.util.Log.d("WebView", consoleMessage.message());
+                        Log.d("WebView", consoleMessage.message());
                         return true;
                     }
                 }
@@ -85,8 +107,7 @@ class MainActivity : ComponentActivity() {
                 addJavascriptInterface(this@MainActivity.screenControl, "screenControl")
             }
         }, update = {
-            File(www, "index.html")
-            it.loadUrl("http://localhost:8080/?" + config)
+            it.loadUrl("http://localhost:8080/?$query")
         })
     }
 

@@ -1,11 +1,10 @@
 package org.metinkale.mosquesignage
 
-import android.app.Activity
 import android.content.Context.MODE_PRIVATE
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 
-fun Activity.askConfigDialog() {
+fun MainActivity.askConfigDialog() {
     val input = EditText(this)
 
     val builder = AlertDialog.Builder(this)

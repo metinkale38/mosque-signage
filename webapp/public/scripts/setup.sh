@@ -1,5 +1,5 @@
 #!/bin/bash
-crontab < crontab
+crontab < /boot/www/scripts/crontab
 
 mount -o remount,rw /boot
 echo http://$(hostname -f)/ > /boot/fullpageos.txt
@@ -11,4 +11,7 @@ echo "rm -rf /home/pi/.cache/chromium/" >> /home/pi/scripts/reload_fullpageos_tx
 
 # add --autoplay-policy=no-user-gesture-required to chromium cmdline
 
+sudo raspi-config nonint enable_overlayfs
+
+/home/pi/scripts/reload_fullpageos_txt
 reboot

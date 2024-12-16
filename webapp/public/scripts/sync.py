@@ -6,6 +6,11 @@ import pathlib
 import hashlib
 
 root = "/boot/www"
+remote = "https://metinkale38.github.io/mosque-signage"
+
+if os.path.isfile("/boot/signage_host"):
+    with open("/boot/signage_host", 'r') as file:
+        remote = file.read().rstrip()
 
 mounted = False
 def mountrw():
@@ -22,7 +27,7 @@ def mountro():
 
 
 host = os.uname()[1]
-lines = requests.get('https://signage.igmg-bs.de/hash.php?hostname='+host).text.splitlines()
+lines = requests.get(remote + '/hash.php?hostname='+host).text.splitlines()
 
 remotefiles = {}
 indexchanged = False
@@ -37,14 +42,14 @@ for file, hash in remotefiles.items():
         print("File "+file+" was added")
         mountrw()
         pathlib.Path(localPath).parent.mkdir(parents=True, exist_ok=True)
-        urllib.request.urlretrieve("https://signage.igmg-bs.de"+file, localPath)
+        urllib.request.urlretrieve(remote + file, localPath)
     else:
         hex = hashlib.md5(open(localPath,"rb").read()).hexdigest()
         if hex != remotefiles[file]:
             print("File "+file+" has changed")
             mountrw()
             pathlib.Path(localPath).parent.mkdir(parents=True, exist_ok=True)
-            urllib.request.urlretrieve("https://signage.igmg-bs.de"+file, localPath+".tmp")
+            urllib.request.urlretrieve(remote + file, localPath+".tmp")
             os.remove(localPath)
             os.rename(localPath+".tmp", localPath)
             if file == "/index.html":

@@ -1,1 +1,1 @@
-# mosque-display
+# mosque-signage

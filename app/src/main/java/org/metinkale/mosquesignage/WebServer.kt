@@ -5,7 +5,7 @@ import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.IHTTPSession
 import java.io.File
 
-class WebServer() : NanoHTTPD("127.0.0.1", 8080) {
+class WebServer(val www: File) : NanoHTTPD("127.0.0.1", 8080) {
 
 
     override fun serve(session: IHTTPSession): Response {

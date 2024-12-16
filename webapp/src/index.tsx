@@ -27,6 +27,7 @@ function Router() {
     case "": return (<><a href="?dashboard">Dashboard</a><br /><a href="?prayertimes">Prayer Times</a><br /></>)
   }
   if(window.location.host==="rpimosq") return rotate("-rotate-90", "braunschweig");
+  if(window.location.host==="metinkale38.github.io") return (<PrayerTimes  config={Default}/>)
 
   return <></>;
 }
