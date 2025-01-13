@@ -1,0 +1,3 @@
+#!/bin/bash
+
+chromium-browser --kiosk --autoplay-policy=no-user-gesture-required --touch-events=enabled --disable-pinch --noerrdialogs --disable-session-crashed-bubble --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT' --disable-component-update --overscroll-history-navigation=0 --disable-features=Translate --disable-site-isolation-trials --renderer-process-limit=2 --enable-low-end-device-mode --single-process --disable-extensions --app=$(/home/pi/scripts/get_url)

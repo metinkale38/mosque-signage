@@ -1,0 +1,4 @@
+@reboot         crontab /boot/scripts/crontab
+@reboot         python /boot/scripts/server.py
+*/30 * * * *    python /boot/scripts/sync.py
+#0    3 * * *    reboot
