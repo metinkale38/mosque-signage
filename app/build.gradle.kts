@@ -1,3 +1,6 @@
+import com.google.gson.Gson
+import kotlin.io.encoding.Base64
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -19,15 +22,33 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("keystore.jks")
+            storePassword = System.getenv("ANDROID_SIGNING_PASSWORD")
+            keyAlias = "igmgsignage"
+            keyPassword = System.getenv("ANDROID_SIGNING_PASSWORD")
+
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
+            enableV4Signing = true
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs["release"]
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -40,6 +61,7 @@ android {
         compose = true
     }
 }
+
 
 dependencies {
 
@@ -59,4 +81,32 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+tasks.register("generateReleaseInfo") {
+    group = "build"
+    description = "Generiert eine JSON-Datei mit Release-Informationen."
+
+    doLast {
+        val outputDir = android.applicationVariants
+            .find { it.name == "release" }?.outputs?.firstOrNull()?.outputFile?.parentFile!!
+
+        if (!outputDir.exists()) {
+            outputDir.mkdirs()
+        }
+
+        val releaseInfo = mapOf(
+            "version" to android.defaultConfig.versionName,
+            "versionCode" to android.defaultConfig.versionCode,
+            "url" to "https://metinkale38.github.io/mosque-signage/app-release.apk",
+        )
+
+        val jsonOutput = Gson().toJson(releaseInfo)
+        val outputFile = File(outputDir, "app-release.json")
+        outputFile.writeText(jsonOutput)
+    }
+}
+
+tasks.named("build").configure {
+    finalizedBy("generateReleaseInfo")
 }

@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        handler.postDelayed(syncAsync, 1000 * 60 * 5)
+        handler.postDelayed(syncAsync, 1000 * 60 * 30)
     }
 
     var reload: () -> Unit = {}
