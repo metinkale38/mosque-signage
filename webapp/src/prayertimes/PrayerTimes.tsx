@@ -51,8 +51,8 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
 
   return (
     <div className='h-full relative'>
-      <div className='absolute inset-0 bg-sky-700 preventBurnInHue'></div>
-      <div className='absolute inset-0'>      <div className={"flex flex-col h-full text-center text-white justify-around py-[2rem] " + (notTransparent ? ' preventBurnInMove' : '')}>
+      <div className='absolute left-0 top-0 right-0 bottom-0 bg-sky-700 preventBurnInHue'></div>
+      <div className='absolute left-0 top-0 right-0 bottom-0'>      <div className={"flex flex-col h-full text-center text-white justify-around py-[2rem] " + (notTransparent ? ' preventBurnInMove' : '')}>
         {
           data.holyDay != null ?
             (<p className={"bg-sky-600 p-[1.5rem] text-white text-center font-medium col-span-2 -mx-[2rem] -mt-[2rem] text-[4rem] [line-height:1] flex justify-center items-center"}>

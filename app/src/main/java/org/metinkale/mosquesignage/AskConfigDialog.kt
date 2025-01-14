@@ -8,16 +8,16 @@ fun MainActivity.askConfigDialog() {
     val input = EditText(this)
 
     val builder = AlertDialog.Builder(this)
-    builder.setTitle("Konfiguration:")
+    builder.setTitle("Configuration")
     builder.setView(input)
 
-    builder.setPositiveButton("Ok") { dialog, _ ->
+    builder.setPositiveButton("OK") { dialog, _ ->
         val userInput = input.text.toString()
         getSharedPreferences("prefs", MODE_PRIVATE).edit().putString("config", userInput.lowercase()).apply()
         recreate()
     }
 
-    builder.setNegativeButton("Abbrechen") { dialog, _ ->
+    builder.setNegativeButton("Cancel") { dialog, _ ->
         dialog.cancel()
         finish()
     }

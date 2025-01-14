@@ -1,5 +1,6 @@
 package org.metinkale.mosquesignage
 
+import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
@@ -57,7 +58,16 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+
+
         lifecycleScope.launch { checkAndUpdateApp(this@MainActivity) }
+        lifecycleScope.launch { adbControl.disableLauncher() }
+    }
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    override fun onBackPressed() {
+        menuDialog()
     }
 
     override fun onDestroy() {

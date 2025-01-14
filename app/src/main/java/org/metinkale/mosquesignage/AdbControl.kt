@@ -84,4 +84,14 @@ class AdbControl(val context: Context) : AdbBase64 {
 
     @ExperimentalEncodingApi
     override fun encodeToString(data: ByteArray): String = Base64.encode(data)
+
+    suspend fun disableLauncher() {
+        shell("pm list packages | grep launcher | cut -d\":\" -f2 | xargs pm disable-user --user 0")
+    }
+
+    suspend fun enableLauncher() {
+        shell("pm list packages | grep launcher | cut -d\":\" -f2 | xargs pm enable")
+    }
+
+
 }
