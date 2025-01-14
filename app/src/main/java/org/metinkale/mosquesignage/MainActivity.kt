@@ -24,14 +24,15 @@ class MainActivity : ComponentActivity() {
 
 
     val www: File by lazy { File(filesDir, "www") }
-    val screenControl: ScreenControl by lazy { ScreenControl(this) }
+    val adbControl: AdbControl by lazy { AdbControl(this) }
     val webServer: WebServer by lazy { WebServer(www) }
 
     val prefs: SharedPreferences by lazy { getSharedPreferences("prefs", MODE_PRIVATE) }
     val config: String by lazy { prefs.getString("config", "")!! }
     val installationId by lazy {
         prefs.getString("installationId", null) ?: let {
-            UUID.randomUUID().toString().also { prefs.edit().putString("installationId", it).apply() }
+            UUID.randomUUID().toString()
+                .also { prefs.edit().putString("installationId", it).apply() }
         }
     }
     val remoteHost: String
@@ -55,6 +56,8 @@ class MainActivity : ComponentActivity() {
                 WebView(query)
             }
         }
+
+        lifecycleScope.launch { checkAndUpdateApp(this@MainActivity) }
     }
 
     override fun onDestroy() {
@@ -104,7 +107,7 @@ class MainActivity : ComponentActivity() {
                 }
                 settings.allowFileAccess = true
 
-                addJavascriptInterface(this@MainActivity.screenControl, "screenControl")
+                addJavascriptInterface(this@MainActivity.adbControl, "screenControl")
             }
         }, update = {
             it.loadUrl("http://localhost:8080/?$query")
