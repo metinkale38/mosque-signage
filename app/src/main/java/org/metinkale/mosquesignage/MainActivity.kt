@@ -11,10 +11,8 @@ import android.view.ViewGroup
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
 import android.webkit.WebView
+import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -22,8 +20,6 @@ import java.util.UUID
 
 
 class MainActivity : ComponentActivity() {
-
-
     val www: File by lazy { File(filesDir, "www") }
     val adbControl: AdbControl by lazy { AdbControl(this) }
     val webServer: WebServer by lazy { WebServer(www) }
@@ -43,7 +39,6 @@ class MainActivity : ComponentActivity() {
     val query: String get() = if (config.contains("?") == true) config.substringAfter("?") else config
     val hostname: String by lazy { "android-$query-$installationId" }
 
-
     val handler = Handler(Looper.getMainLooper())
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,14 +48,9 @@ class MainActivity : ComponentActivity() {
             askConfigDialog()
         } else {
             webServer.start()
-            setContent {
-                WebView(query)
-            }
+            setContentView(WebView(query))
         }
 
-
-
-        lifecycleScope.launch { checkAndUpdateApp(this@MainActivity) }
         lifecycleScope.launch { adbControl.disableLauncher() }
     }
 
@@ -93,35 +83,67 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        lifecycleScope.launch { checkAndUpdateApp(this@MainActivity) }
 
         handler.postDelayed(syncAsync, 1000 * 60 * 30)
     }
 
     var reload: () -> Unit = {}
 
-    @Composable
-    fun WebView(query: String) {
-        AndroidView(factory = {
-            WebView(it).apply {
-                reload = { reload() }
-                settings.javaScriptEnabled = true
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-                )
+    fun WebView(query: String): View = LinearLayout(this).apply {
 
-                webChromeClient = object : WebChromeClient() {
-                    override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                        Log.d("WebView", consoleMessage.message());
-                        return true;
+        val rotationAngle = getSharedPreferences("prefs", MODE_PRIVATE).getInt("rotate", 0)
+
+
+        addView(object : WebView(this@MainActivity) {
+            override fun onMeasure(
+                widthMeasureSpec: Int,
+                heightMeasureSpec: Int
+            ) {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+                val width = MeasureSpec.getSize(widthMeasureSpec)
+                val height = MeasureSpec.getSize(heightMeasureSpec)
+                when (rotationAngle) {
+                    90 -> {
+                        translationX = width.toFloat()
+                        setMeasuredDimension(height, width)
+                        pivotX = 0f
+                        pivotY = 0f
+                        rotation = 90f
+                    }
+
+                    180 -> {
+                        rotation = 180f
+                    }
+
+                    270 -> {
+                        translationX = height.toFloat()
+                        setMeasuredDimension(height, width)
+                        pivotX = 0f
+                        pivotY = height.toFloat()
+                        rotation = 270f
                     }
                 }
-                settings.allowFileAccess = true
-
-                addJavascriptInterface(this@MainActivity.adbControl, "screenControl")
             }
-        }, update = {
-            it.loadUrl("http://localhost:8080/?$query")
+        }.apply {
+            reload = { reload() }
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+            )
+
+            webChromeClient = object : WebChromeClient() {
+                override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+                    Log.d("WebView", consoleMessage.message());
+                    return true;
+                }
+            }
+            settings.allowFileAccess = true
+            settings.javaScriptEnabled = true
+
+            addJavascriptInterface(this@MainActivity.adbControl, "screenControl")
+            loadUrl("http://localhost:8080/?$query")
         })
     }
+
 
 }

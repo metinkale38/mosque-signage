@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog
 
 fun MainActivity.askConfigDialog() {
     val input = EditText(this)
+    input.isSingleLine = true
 
     val builder = AlertDialog.Builder(this)
     builder.setTitle("Configuration")
@@ -13,7 +14,8 @@ fun MainActivity.askConfigDialog() {
 
     builder.setPositiveButton("OK") { dialog, _ ->
         val userInput = input.text.toString()
-        getSharedPreferences("prefs", MODE_PRIVATE).edit().putString("config", userInput.lowercase()).apply()
+        getSharedPreferences("prefs", MODE_PRIVATE).edit()
+            .putString("config", userInput.lowercase()).apply()
         recreate()
     }
 
