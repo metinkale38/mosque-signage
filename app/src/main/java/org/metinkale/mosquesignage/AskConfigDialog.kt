@@ -1,12 +1,16 @@
 package org.metinkale.mosquesignage
 
 import android.content.Context.MODE_PRIVATE
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 
 fun MainActivity.askConfigDialog() {
+    val prefs = getSharedPreferences("prefs", MODE_PRIVATE)
     val input = EditText(this)
+    input.setText(prefs.getString("config", ""))
     input.isSingleLine = true
+    input.imeOptions = EditorInfo.IME_ACTION_DONE
 
     val builder = AlertDialog.Builder(this)
     builder.setTitle("Configuration")
@@ -14,7 +18,7 @@ fun MainActivity.askConfigDialog() {
 
     builder.setPositiveButton("OK") { dialog, _ ->
         val userInput = input.text.toString()
-        getSharedPreferences("prefs", MODE_PRIVATE).edit()
+        prefs.edit()
             .putString("config", userInput.lowercase()).apply()
         recreate()
     }
