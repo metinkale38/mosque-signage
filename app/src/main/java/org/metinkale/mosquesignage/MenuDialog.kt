@@ -23,6 +23,9 @@ fun MainActivity.menuDialog() {
                     }, 700)
                 }
             },
+            "Config" to{
+                askConfigDialog()
+            },
             "Rotate" to {
                 val prefs = getSharedPreferences("prefs", MODE_PRIVATE);
                 val current = prefs.getInt("rotate", 0)
