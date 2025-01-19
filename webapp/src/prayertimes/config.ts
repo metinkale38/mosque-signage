@@ -33,10 +33,23 @@ export const Braunschweig: Config = {
  };
 
  
-export const Neustadt: Config = {
+ export const Neustadt: Config = {
     ...Empty,
     city: "Neustadt",    
-    bgColor: "bg-green-700"
+    bgColor: "bg-green-700",
+    showHolyDay: true,
+    showHighlight: true,
+    sabah: -30,
+ };
+
+
+ export const Goslar: Config = {
+    ...Empty,
+    city: "Goslar",    
+    bgColor: "bg-green-700",
+    showHolyDay: true,
+    showHighlight: true,
+    sabah: -30,
  };
 
 export const Default: Config = {...Braunschweig, screenOnOff: false}
