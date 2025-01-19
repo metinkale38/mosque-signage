@@ -1,10 +1,12 @@
 package org.metinkale.mosquesignage
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.PowerManager
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +41,8 @@ class MainActivity : ComponentActivity() {
     val query: String get() = if (config.contains("?") == true) config.substringAfter("?") else config
     val hostname: String by lazy { "android-$query-$installationId" }
 
+    private var wakeLock: PowerManager.WakeLock? = null
+
     val handler = Handler(Looper.getMainLooper())
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +56,13 @@ class MainActivity : ComponentActivity() {
         }
 
         lifecycleScope.launch { adbControl.disableLauncher() }
+
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        wakeLock = powerManager.newWakeLock(
+            PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+            "MyApp:WakeLockTag"
+        )
+
     }
 
     @SuppressLint("MissingSuperCall")
@@ -60,8 +71,10 @@ class MainActivity : ComponentActivity() {
         menuDialog()
     }
 
+    @SuppressLint("Wakelock")
     override fun onDestroy() {
         webServer.stop()
+        wakeLock?.release()
         super.onDestroy()
     }
 
