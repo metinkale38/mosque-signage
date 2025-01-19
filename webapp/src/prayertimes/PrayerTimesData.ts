@@ -17,12 +17,13 @@ export class PrayerTimesData {
   hijri: LocalizedText = new LocalizedText("", "")
   holyDay: LocalizedText | undefined = undefined
   times: Array<PrayerTime> = []
-  sabah: PrayerTime = {} as PrayerTime;
+  sabah: PrayerTime | undefined = undefined;
   cuma: PrayerTime | undefined = undefined;
   countdown: string = "00:00";
   time: string = "00:00";
   selectionIdx: number = -1;
   highlight: { name: LocalizedText, time: string, next: LocalizedText, nextTime: string } | undefined = undefined;
+  config: Config = {} as Config
 }
 
 
@@ -62,25 +63,27 @@ export function updatePrayerTimesData(data: PrayerTimesData): PrayerTimesData {
   let left = (next.unix() - now.unix()) / 60
 
   let highlight = undefined;
-  switch (selectionIdx) {
-    case 0/*Fajr*/: if (left <= 35) highlight = { time: data.times[0].time, name: Text.FAJRPRAYER, nextTime: data.times[1].time, next: Text.SUN }; break;
-    case 1/*    */: highlight = undefined; break;
-    case 2/*Dhuhr*/:
-      if (data.cuma == null) {
-        if (passed <= 20) highlight = { time: data.times[2].time, name: Text.DHUHRPRAYER, nextTime: data.times[3].time, next: Text.ASRPRAYER };
-      } else {
-        var dhuhr = moment(now.format("YYYY-MM-DD ") + data.times[2].time);
-        var cuma = dhuhr.hours() === 13 ? moment(now.format("YYYY-MM-DD 14:30:00")) : moment(now.format("YYYY-MM-DD 12:30:00"));
-        if (cuma.isBefore(dhuhr)) cuma = dhuhr;
-        passed = (now.unix() - cuma.unix()) / 60;
-        if (passed >= 0 && passed <= 60) {
-          highlight = { time: data.cuma!.time, name: Text.CUMA, nextTime: data.times[3].time, next: Text.ASRPRAYER };
+  if(data.config.showHighlight){
+    switch (selectionIdx) {
+      case 0/*Fajr*/: if (left <= 35) highlight = { time: data.times[0].time, name: Text.FAJRPRAYER, nextTime: data.times[1].time, next: Text.SUN }; break;
+      case 1/*    */: highlight = undefined; break;
+      case 2/*Dhuhr*/:
+        if (data.cuma == null) {
+          if (passed <= 20) highlight = { time: data.times[2].time, name: Text.DHUHRPRAYER, nextTime: data.times[3].time, next: Text.ASRPRAYER };
+        } else {
+          var dhuhr = moment(now.format("YYYY-MM-DD ") + data.times[2].time);
+          var cuma = dhuhr.hours() === 13 ? moment(now.format("YYYY-MM-DD 14:30:00")) : moment(now.format("YYYY-MM-DD 12:30:00"));
+          if (cuma.isBefore(dhuhr)) cuma = dhuhr;
+          passed = (now.unix() - cuma.unix()) / 60;
+          if (passed >= 0 && passed <= 60) {
+            highlight = { time: data.cuma!.time, name: Text.CUMA, nextTime: data.times[3].time, next: Text.ASRPRAYER };
+          }
         }
-      }
-      break;
-    case 3/*Asr*/: if (passed <= 20) highlight = { time: data.times[3].time, name: Text.ASRPRAYER, nextTime: data.times[4].time, next: Text.MAGHRIB }; break;
-    case 4/*Maghrib*/: if (passed <= 20) highlight = { time: data.times[4].time, name: Text.MAGHRIBPRAYER, nextTime: data.times[5].time, next: Text.ISHAAPRAYER }; break;
-    case 5/*Ishaa*/: if (passed <= 20) highlight = { time: data.times[5].time, name: Text.ISHAAPRAYER, nextTime: data.times[0].time, next: Text.FAJRPRAYER }; break;
+        break;
+      case 3/*Asr*/: if (passed <= 20) highlight = { time: data.times[3].time, name: Text.ASRPRAYER, nextTime: data.times[4].time, next: Text.MAGHRIB }; break;
+      case 4/*Maghrib*/: if (passed <= 20) highlight = { time: data.times[4].time, name: Text.MAGHRIBPRAYER, nextTime: data.times[5].time, next: Text.ISHAAPRAYER }; break;
+      case 5/*Ishaa*/: if (passed <= 20) highlight = { time: data.times[5].time, name: Text.ISHAAPRAYER, nextTime: data.times[0].time, next: Text.FAJRPRAYER }; break;
+    }
   }
 
   data = { ...data, countdown: `${countdown}`, selectionIdx: selectionIdx, time: time, highlight: highlight };
@@ -130,7 +133,7 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
       var date = today.format("YYYY-MM-DD");
 
       let hijri = await toHijri(today);
-      let holyDay = await getHolyDay(hijri);
+      let holyDay = config.showHolyDay? await getHolyDay(hijri) : null;
 
 
       var line = data.split("\n").find(line => line.startsWith(date))
@@ -163,7 +166,7 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
 
       var [fajr, sun, dhuhr, asr, maghrib, ishaa] = line!!.split(";").slice(1);
 
-      var sabah = moment(sun, ['h:m a', 'H:m']).subtract("30", "minutes").format("HH:mm");
+      var sabah = moment(sun, ['h:m a', 'H:m']).add(config.sabah, "minutes").format("HH:mm");
 
       var cuma: string | undefined = dhuhr.startsWith("13:") ? config.cumaSummer : config.cumaWinter;
       if (cuma && cuma < dhuhr) cuma = undefined;
@@ -183,9 +186,10 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
           { name: Text.ASR, time: asr },
           { name: Text.MAGHRIB, time: maghrib },
           { name: Text.ISHAA, time: ishaa }
-        ],
-        sabah: { name: Text.SABAH, time: sabah },
+        ],  	
+        sabah: config.sabah? { name: Text.SABAH, time: sabah } : undefined,
         cuma: cuma ? { name: Text.CUMA, time: cuma } : undefined,
+        config: config
       } as PrayerTimesData)
 
     })

@@ -51,7 +51,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
 
   return (
     <div className='h-full relative'>
-      <div className='absolute left-0 top-0 right-0 bottom-0 bg-sky-700 preventBurnInHue'></div>
+      <div className={'absolute left-0 top-0 right-0 bottom-0 ' + config.bgColor + ' preventBurnInHue'}></div>
       <div className='absolute left-0 top-0 right-0 bottom-0'>      <div className={"flex flex-col h-full text-center text-white justify-around py-[2rem] " + (notTransparent ? ' preventBurnInMove' : '')}>
         {
           data.holyDay != null ?
@@ -59,9 +59,9 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
               {render(data.holyDay!!)}
             </p>) : <></>
         }
-        <p className='flex items-center justify-center italic text-[6.5rem] [line-height:1] col-span-2 text-ellipsis overflow-hidden block'>{render(data.date)}</p>
+        <p className='flex items-center justify-center italic text-[6.5rem] [line-height:1.4] col-span-2 text-ellipsis overflow-hidden block'>{render(data.date)}</p>
         <p className='flex items-center justify-center text-[22rem] [line-height:1] col-span-2'>{data.time}</p>
-        <p className='flex items-center justify-center italic text-[6.5rem] [line-height:1] col-span-2 text-ellipsis overflow-hidden block'>{render(data.hijri)}</p>
+        <p className='flex items-center justify-center italic text-[6.5rem] [line-height:1.4] col-span-2 text-ellipsis overflow-hidden block'>{render(data.hijri)}</p>
 
         {
           data.highlight ?
@@ -74,7 +74,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
                 data.times.map((element, idx) => {
 
                   if (alternativeTime) {
-                    if (idx === 1) {
+                    if (idx === 1 && data.sabah != null) {
                       element = data.sabah;
                     }
                     else if (idx === 2 && data.cuma != null) {
@@ -98,7 +98,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
                 data.times.map((element, idx) => {
 
                   if (alternativeTime) {
-                    if (idx === 1) {
+                    if (idx === 1 && data.sabah != null) {
                       element = data.sabah;
                     }
                     else if (idx === 2 && data.cuma != null) {
