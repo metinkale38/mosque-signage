@@ -20,6 +20,7 @@ import java.net.URL
 private val fileName = "MosqueSignage.apk"
 
 suspend fun checkAndUpdateApp(context: Context) {
+    if(isFireTV()) return
     val jsonUrl = "https://metinkale38.github.io/mosque-signage/app-release.json"
 
     // Aktuelle Version der App auslesen

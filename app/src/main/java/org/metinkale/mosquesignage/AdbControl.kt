@@ -34,7 +34,7 @@ class AdbControl(val context: Context) : AdbBase64 {
     }
 
     suspend fun installApk(fileName: String) {
-        Log.e("AdbControl","installApk")
+        Log.e("AdbControl", "installApk")
         shell("rm /data/local/tmp/$fileName")
         shell("mv /sdcard/Download/$fileName /data/local/tmp/")
         shell("sh -c \"pm install /data/local/tmp/$fileName && am start -n org.metinkale.mosquesignage/.MainActivity\" &")
@@ -46,14 +46,16 @@ class AdbControl(val context: Context) : AdbBase64 {
     }
 
     private suspend fun shell(cmd: String?) = withContext(Dispatchers.IO) {
-        try {
-            var socket = Socket("localhost", 5555);
-            var connection = AdbConnection.create(socket, crypto);
-            connection.connect();
-            cmd?.let { connection.open("shell:$it") }
-            connection.close()
-        } catch (e: Exception) {
-            Log.e("ScreenServer", e.message, e);
+        if (!isFireTV()) {
+            try {
+                var socket = Socket("localhost", 5555);
+                var connection = AdbConnection.create(socket, crypto)
+                connection.connect()
+                cmd?.let { connection.open("shell:$it") }
+                connection.close()
+            } catch (e: Exception) {
+                Log.e("ScreenServer", e.message, e);
+            }
         }
     }
 

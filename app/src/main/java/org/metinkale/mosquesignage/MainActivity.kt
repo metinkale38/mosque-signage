@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
         lifecycleScope.launch { adbControl.disableLauncher() }
 
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
         wakeLock = powerManager.newWakeLock(
             PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
             "MyApp:WakeLockTag"
