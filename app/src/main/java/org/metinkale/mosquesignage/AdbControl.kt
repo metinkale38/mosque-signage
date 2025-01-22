@@ -92,6 +92,7 @@ class AdbControl(val context: Context) : AdbBase64 {
         shell("settings put secure screensaver_enabled 0")
         shell("settings put secure screensaver_timeout 0")
         shell("settings put system screen_off_timeout 2147483647")
+        shell("settings put secure sleep_timeout 2147483647")
     }
 
     suspend fun enableLauncher() {
@@ -99,6 +100,7 @@ class AdbControl(val context: Context) : AdbBase64 {
         shell("settings put secure screensaver_enabled 1")
         shell("settings put secure screensaver_timeout 300000")
         shell("settings put system screen_off_timeout 300000")
+        shell("settings put secure sleep_timeout 1800000")
     }
 
 
