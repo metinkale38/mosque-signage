@@ -19,7 +19,7 @@ fun MainActivity.askConfigDialog() {
     builder.setPositiveButton("OK") { dialog, _ ->
         val userInput = input.text.toString()
         prefs.edit()
-            .putString("config", userInput.lowercase()).apply()
+            .putString("config", userInput.lowercase()).commit()
         recreate()
     }
 
