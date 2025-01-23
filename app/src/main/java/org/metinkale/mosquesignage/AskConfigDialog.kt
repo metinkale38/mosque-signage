@@ -18,9 +18,9 @@ fun MainActivity.askConfigDialog() {
 
     builder.setPositiveButton("OK") { dialog, _ ->
         val userInput = input.text.toString()
-        prefs.edit()
-            .putString("config", userInput.lowercase()).commit()
-        recreate()
+        if (prefs.edit()
+                .putString("config", userInput.lowercase()).commit()
+        ) recreate()
     }
 
     builder.setNegativeButton("Cancel") { dialog, _ ->

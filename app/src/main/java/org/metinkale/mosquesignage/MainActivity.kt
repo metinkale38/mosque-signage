@@ -1,7 +1,6 @@
 package org.metinkale.mosquesignage
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
@@ -17,13 +16,15 @@ import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import org.metinkale.mosquesignage.system.System
+import org.metinkale.mosquesignage.system.checkAndUpdateApp
 import java.io.File
 import java.util.UUID
 
 
 class MainActivity : ComponentActivity() {
     val www: File by lazy { File(filesDir, "www") }
-    val adbControl: AdbControl by lazy { AdbControl(this) }
+    val adbControl: System by lazy { System(this) }
     val webServer: WebServer by lazy { WebServer(www) }
 
     val prefs: SharedPreferences by lazy { getSharedPreferences("prefs", MODE_PRIVATE) }
@@ -54,6 +55,7 @@ class MainActivity : ComponentActivity() {
             webServer.start()
             setContentView(WebView(query))
         }
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
         lifecycleScope.launch { adbControl.disableLauncher() }
 
@@ -74,7 +76,7 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("Wakelock")
     override fun onDestroy() {
         webServer.stop()
-        wakeLock?.release()
+        wakeLock?.takeIf { it.isHeld }?.release()
         super.onDestroy()
     }
 
@@ -146,7 +148,7 @@ class MainActivity : ComponentActivity() {
 
             webChromeClient = object : WebChromeClient() {
                 override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                    Log.d("WebView", consoleMessage.message());
+                    Log.e("WebView", consoleMessage.message());
                     return true;
                 }
             }

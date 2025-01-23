@@ -1,4 +1,4 @@
-package org.metinkale.mosquesignage
+package org.metinkale.mosquesignage.system
 
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
@@ -20,7 +20,7 @@ import java.net.URL
 private val fileName = "MosqueSignage.apk"
 
 suspend fun checkAndUpdateApp(context: Context) {
-    if(isFireTV()) return
+    if (!Shell.supported) return
     val jsonUrl = "https://metinkale38.github.io/mosque-signage/app-release.json"
 
     // Aktuelle Version der App auslesen
@@ -36,16 +36,17 @@ suspend fun checkAndUpdateApp(context: Context) {
 
         if (newVersionCode > currentVersionCode) {
             // Neue Version gefunden, APK herunterladen und installieren
-            Log.e("AppUpdater","New Version found")
+            Log.e("AppUpdater", "New Version found")
             downloadAndInstallApk(context, apkUrl)
-        }else{
+        } else {
 
-            Log.e("AppUpdater","Version up-to-date")
+            Log.e("AppUpdater", "Version up-to-date")
         }
     }
 }
 
-private suspend fun fetchJson(urlString: String): String? = withContext(Dispatchers.IO) {
+suspend fun fetchJson(urlString: String): String? = withContext(Dispatchers.IO) {
+    Log.e("AppUpdater", "fetchJson")
     try {
         val url = URL(urlString)
         val connection = url.openConnection() as HttpURLConnection
@@ -62,14 +63,14 @@ private suspend fun fetchJson(urlString: String): String? = withContext(Dispatch
 
         response.toString()
     } catch (e: Exception) {
-        e.printStackTrace()
+        Log.e("AppUpdater", "fetchJson failed", e)
         null
     }
 }
 
 private suspend fun downloadAndInstallApk(context: Context, apkUrl: String) {
-    Log.e("AppUpdater","downloadAndInstallApk")
-    AdbControl(context).delete("/sdcard/Download/$fileName")
+    Log.e("AppUpdater", "downloadAndInstallApk")
+    System(context).delete("/sdcard/Download/$fileName")
 
     val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
@@ -86,7 +87,7 @@ private suspend fun downloadAndInstallApk(context: Context, apkUrl: String) {
 
 class DownloadCompleteReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.e("AppUpdater","DownloadCompleteReceiver")
+        Log.e("AppUpdater", "DownloadCompleteReceiver")
 
         val downloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
         if (context != null && downloadId != null && downloadId != -1L) {
@@ -95,7 +96,7 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
             val apkUri = downloadManager.getUriForDownloadedFile(downloadId)
             if (apkUri != null) {
                 runBlocking {
-                    AdbControl(context).installApk(fileName)
+                    System(context).installApk(fileName)
                 }
             }
         }

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import org.metinkale.mosquesignage.system.Shell
 
 
 fun MainActivity.menuDialog() {
@@ -22,7 +23,7 @@ fun MainActivity.menuDialog() {
     builder.setTitle("Settings ($versionCode)")
 
     // Liste von Optionen
-    val options: Array<Pair<String, () -> Unit>> =
+    val options: Array<Pair<String, () -> Any>> =
         arrayOf(
             "Run Launcher" to { // "Run Launcher" ausgewählt
                 lifecycleScope.launch {
@@ -42,6 +43,11 @@ fun MainActivity.menuDialog() {
                 val current = prefs.getInt("rotate", 0)
                 prefs.edit().putInt("rotate", (current + 90) % 360).apply()
                 recreate()
+            },
+            "Update App" to {
+                lifecycleScope.launch {
+                    ManualAPKUpdater(this@menuDialog).checkForUpdate();
+                }
             },
             "Settings" to { // "Settings" ausgewählt
                 startActivity(Intent(android.provider.Settings.ACTION_SETTINGS))

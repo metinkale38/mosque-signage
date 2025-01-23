@@ -19,7 +19,7 @@ suspend fun sync(remote: String, www: File, hostname: String): Boolean {
     for ((file, hash) in remoteFiles) {
         val localPath = File(www, file)
         if (!localPath.exists()) {
-            Log.i("Sync", "File $file was added")
+            Log.e("Sync", "File $file was added")
             localPath.parentFile?.mkdirs()
             downloadFile("$remote$file", localPath)
 
@@ -29,7 +29,7 @@ suspend fun sync(remote: String, www: File, hostname: String): Boolean {
         } else {
             val localHash = calculateMd5(localPath)
             if (localHash != hash) {
-                Log.i("Sync", "File $file has changed")
+                Log.e("Sync", "File $file has changed")
                 localPath.parentFile?.mkdirs()
                 val tempPath = File(localPath.parent, "${localPath.name}.tmp")
                 downloadFile("$remote$file", tempPath)
@@ -46,7 +46,7 @@ suspend fun sync(remote: String, www: File, hostname: String): Boolean {
     val localFiles = www.walkTopDown().filter { it.isFile }.map { it.relativeTo(www).path }
     for (path in localFiles) {
         if (!remoteFiles.containsKey("/$path")) {
-            Log.i("Sync", "File $path was removed")
+            Log.e("Sync", "File $path was removed")
             File(www, path).delete()
         }
     }
@@ -55,6 +55,7 @@ suspend fun sync(remote: String, www: File, hostname: String): Boolean {
 }
 
 private suspend fun fetchRemoteHashes(url: String): List<String> = withContext(Dispatchers.IO) {
+    Log.e("Sync","fetchRemoteHashes")
     val connection = URL(url).openConnection() as HttpURLConnection
     connection.inputStream.bufferedReader().readLines().also {
         connection.disconnect()
@@ -70,6 +71,7 @@ private fun parseRemoteHashes(lines: List<String>): Map<String, String> {
 }
 
 private suspend fun downloadFile(url: String, destination: File) = withContext(Dispatchers.IO) {
+    Log.e("Sync","downloadFile $url")
     val connection = URL(url).openConnection() as HttpURLConnection
     connection.inputStream.use { input ->
         destination.outputStream().use { output ->
