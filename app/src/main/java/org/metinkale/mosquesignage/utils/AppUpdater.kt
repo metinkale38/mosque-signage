@@ -1,4 +1,4 @@
-package org.metinkale.mosquesignage.system
+package org.metinkale.mosquesignage.utils
 
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import org.metinkale.mosquesignage.shell.Shell
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -20,7 +21,7 @@ import java.net.URL
 private val fileName = "MosqueSignage.apk"
 
 suspend fun checkAndUpdateApp(context: Context) {
-    if (!Shell.supported) return
+    if (!Shell.Companion.supported) return
     val jsonUrl = "https://metinkale38.github.io/mosque-signage/app-release.json"
 
     // Aktuelle Version der App auslesen
@@ -70,7 +71,7 @@ suspend fun fetchJson(urlString: String): String? = withContext(Dispatchers.IO) 
 
 private suspend fun downloadAndInstallApk(context: Context, apkUrl: String) {
     Log.e("AppUpdater", "downloadAndInstallApk")
-    System(context).delete("/sdcard/Download/$fileName")
+    SystemUtils.delete("/sdcard/Download/$fileName")
 
     val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
@@ -96,7 +97,7 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
             val apkUri = downloadManager.getUriForDownloadedFile(downloadId)
             if (apkUri != null) {
                 runBlocking {
-                    System(context).installApk(fileName)
+                    SystemUtils.installApk(fileName)
                 }
             }
         }

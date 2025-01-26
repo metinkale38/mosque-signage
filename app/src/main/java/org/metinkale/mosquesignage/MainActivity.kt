@@ -1,164 +1,97 @@
 package org.metinkale.mosquesignage
 
-import android.annotation.SuppressLint
-import android.content.SharedPreferences
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.PowerManager
-import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.webkit.ConsoleMessage
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.widget.LinearLayout
+import android.view.WindowManager
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.metinkale.mosquesignage.system.System
-import org.metinkale.mosquesignage.system.checkAndUpdateApp
-import java.io.File
-import java.util.UUID
+import org.metinkale.mosquesignage.utils.ManualAPKUpdater
+import org.metinkale.mosquesignage.utils.SystemUtils
+import org.metinkale.mosquesignage.utils.askConfigDialog
+import kotlin.apply
 
 
 class MainActivity : ComponentActivity() {
-    val www: File by lazy { File(filesDir, "www") }
-    val adbControl: System by lazy { System(this) }
-    val webServer: WebServer by lazy { WebServer(www) }
-
-    val prefs: SharedPreferences by lazy { getSharedPreferences("prefs", MODE_PRIVATE) }
-    val config: String by lazy { prefs.getString("config", "")!! }
-    val installationId by lazy {
-        prefs.getString("installationId", null) ?: let {
-            UUID.randomUUID().toString()
-                .also { prefs.edit().putString("installationId", it).apply() }
-        }
-    }
-    val remoteHost: String
-        get() = config.takeIf { it.startsWith("http") }?.substringBefore("?")
-            ?: "https://metinkale38.github.io/mosque-signage"
-
-    val query: String get() = if (config.contains("?") == true) config.substringAfter("?") else config
-    val hostname: String by lazy { "android-$query-$installationId" }
-
-    private var wakeLock: PowerManager.WakeLock? = null
-
-    val handler = Handler(Looper.getMainLooper())
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.addFlags(View.KEEP_SCREEN_ON)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        if (config.isEmpty()) {
+        if (App.config.isEmpty()) {
             askConfigDialog()
         } else {
-            webServer.start()
-            setContentView(WebView(query))
+            val intent = Intent(this, OverlayService::class.java)
+            startService(intent)
+            setContentView(ListView(this).init())
+
+
+            lifecycleScope.launch { SystemUtils.init() }
         }
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+    }
 
-        lifecycleScope.launch { adbControl.disableLauncher() }
+    private fun ListView.init() = apply {
+        keepScreenOn = true
+        val versionCode = try {
+            val pInfo = packageManager.getPackageInfo(packageName, 0)
+            pInfo.versionCode
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            0
+        }
 
-        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
-        wakeLock = powerManager.newWakeLock(
-            PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
-            "MyApp:WakeLockTag"
+        val options: Array<Pair<String, () -> Unit>> = arrayOf(
+            "Start" to {
+                App.enabled = true
+                OverlayService.restart()
+                recreate()
+            },
+            "Config" to { askConfigDialog() },
+            "Rotate" to {
+                val prefs = getSharedPreferences("prefs", MODE_PRIVATE)
+                val current = prefs.getInt("rotate", 0)
+                prefs.edit().putInt("rotate", (current + 90) % 360).apply()
+                OverlayService.restart()
+            },
+            "Update App ($versionCode)" to {
+                lifecycleScope.launch {
+                    ManualAPKUpdater(this@MainActivity).checkForUpdate()
+                }
+            },
+            "Test On/Off" to {
+                Toast.makeText(
+                    this@MainActivity,
+                    "Turning off Screen for 10 secs",
+                    Toast.LENGTH_LONG
+                ).show()
+                lifecycleScope.launch {
+                    delay(2000)
+                    SystemUtils.off()
+                    delay(10000)
+                    SystemUtils.on()
+                }
+            },
+            "Settings" to {
+                startActivity(Intent(android.provider.Settings.ACTION_SETTINGS))
+            }
+
         )
 
-    }
+        val arrayAdapter = ArrayAdapter<String>(
+            this@MainActivity,
+            android.R.layout.simple_list_item_1,
+            options.map { it.first })
+        adapter = arrayAdapter
 
-    @SuppressLint("MissingSuperCall")
-    @Override
-    override fun onBackPressed() {
-        menuDialog()
-    }
 
-    @SuppressLint("Wakelock")
-    override fun onDestroy() {
-        webServer.stop()
-        wakeLock?.takeIf { it.isHeld }?.release()
-        super.onDestroy()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        syncAsync()
-    }
-
-    override fun onPause() {
-        handler.removeCallbacks(syncAsync)
-        super.onPause()
-    }
-
-    val syncAsync: () -> Unit = {
-        if (config.isNotEmpty()) {
-            lifecycleScope.launch {
-                if (sync(remoteHost, www, hostname)) runOnUiThread {
-                    reload()
-                }
-            }
+        setOnItemClickListener { _, _, position, _ ->
+            options[position].second.invoke()
         }
-        lifecycleScope.launch { checkAndUpdateApp(this@MainActivity) }
-
-        handler.postDelayed(syncAsync, 1000 * 60 * 30)
     }
-
-    var reload: () -> Unit = {}
-
-    fun WebView(query: String): View = LinearLayout(this).apply {
-
-        val rotationAngle = getSharedPreferences("prefs", MODE_PRIVATE).getInt("rotate", 0)
-
-
-        addView(object : WebView(this@MainActivity) {
-            override fun onMeasure(
-                widthMeasureSpec: Int,
-                heightMeasureSpec: Int
-            ) {
-                super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-                val width = MeasureSpec.getSize(widthMeasureSpec)
-                val height = MeasureSpec.getSize(heightMeasureSpec)
-                when (rotationAngle) {
-                    90 -> {
-                        translationX = width.toFloat()
-                        setMeasuredDimension(height, width)
-                        pivotX = 0f
-                        pivotY = 0f
-                        rotation = 90f
-                    }
-
-                    180 -> {
-                        rotation = 180f
-                    }
-
-                    270 -> {
-                        translationX = height.toFloat()
-                        setMeasuredDimension(height, width)
-                        pivotX = 0f
-                        pivotY = height.toFloat()
-                        rotation = 270f
-                    }
-                }
-            }
-        }.apply {
-            reload = { reload() }
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-            )
-
-            webChromeClient = object : WebChromeClient() {
-                override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                    Log.e("WebView", consoleMessage.message());
-                    return true;
-                }
-            }
-            settings.allowFileAccess = true
-            settings.javaScriptEnabled = true
-
-            addJavascriptInterface(this@MainActivity.adbControl, "screenControl")
-            loadUrl("http://localhost:8080/?$query")
-        })
-    }
-
 
 }
+

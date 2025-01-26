@@ -1,4 +1,4 @@
-package org.metinkale.mosquesignage.system
+package org.metinkale.mosquesignage.shell
 
 import android.os.Build
 import android.util.Log
@@ -16,7 +16,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 object AdbShell : Shell, AdbBase64 {
     override suspend fun exec(cmd: String) {
         withContext(Dispatchers.IO) {
-            Log.e("AdbShell","exec $cmd")
+            Log.e("AdbShell", ">>$cmd")
             try {
                 var socket = Socket("localhost", 5555);
                 var connection = AdbConnection.create(socket, crypto)
@@ -30,9 +30,8 @@ object AdbShell : Shell, AdbBase64 {
     }
 
     val crypto = run {
-        val context = App.getAppContext()
-        val private = File(context.filesDir, "private")
-        val public = File(context.filesDir, "public")
+        val private = File(App.ctx.filesDir, "private")
+        val public = File(App.ctx.filesDir, "public")
 
         if (private.exists() && public.exists()) {
             AdbCrypto.loadAdbKeyPair(this, private, public)

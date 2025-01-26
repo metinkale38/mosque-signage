@@ -1,4 +1,4 @@
-package org.metinkale.mosquesignage.system
+package org.metinkale.mosquesignage.shell
 
 import android.util.Log
 import java.io.BufferedReader
@@ -10,6 +10,7 @@ object RootShell : Shell {
 
     override suspend fun exec(cmd: String) {
         try {
+            Log.e("RootShell", ">>$cmd")
             val process = ProcessBuilder("/system/xbin/su", "-c", cmd)
                 .redirectErrorStream(true)
                 .start()
@@ -23,10 +24,10 @@ object RootShell : Shell {
             }
 
             val exitCode = process.waitFor()
-            Log.e("AdbControl", "Command executed with exit code: $exitCode")
-            Log.e("AdbControl", "Output: \n$result")
+
+            Log.e("RootShell", "<<($exitCode): $result")
         } catch (e: Exception) {
-            Log.e("AdbControl", "Error executing root command", e)
+            Log.e("RootShell", "Error executing command", e)
         }
     }
 

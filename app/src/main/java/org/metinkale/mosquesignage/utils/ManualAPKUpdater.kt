@@ -1,4 +1,4 @@
-package org.metinkale.mosquesignage
+package org.metinkale.mosquesignage.utils
 
 import android.app.ProgressDialog
 import android.content.Context
@@ -11,7 +11,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import org.json.JSONObject
-import org.metinkale.mosquesignage.system.fetchJson
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
