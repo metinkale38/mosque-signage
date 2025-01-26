@@ -41,7 +41,7 @@ class ManualAPKUpdater(private var context: Context) {
             val newVersionCode = jsonObject.getInt("versionCode")
             val apkUrl = jsonObject.getString("url")
 
-            if (newVersionCode > currentVersionCode || true) {
+            if (newVersionCode >= currentVersionCode) {
                 // Neue Version gefunden, APK herunterladen und installieren
                 Toast.makeText(context, "New Version found", Toast.LENGTH_SHORT).show()
                 DownloadNewVersion(

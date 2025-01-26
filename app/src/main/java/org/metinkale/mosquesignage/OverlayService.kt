@@ -45,12 +45,6 @@ class OverlayService : Service() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
-        if (App.config.isEmpty() || !App.enabled ||
-            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this))
-        ) {
-            stopSelf()
-            return
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -64,7 +58,12 @@ class OverlayService : Service() {
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
             )
         }
-
+        if (App.config.isEmpty() || !App.enabled ||
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this))
+        ) {
+            stopSelf()
+            return
+        }
         GlobalScope.launch { SystemUtils.startActivity() }
 
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
@@ -128,7 +127,9 @@ class OverlayService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         running = false
-        stopForeground(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        }
 
         if (signageView != null) {
             windowManager.removeView(signageView)

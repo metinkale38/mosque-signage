@@ -36,7 +36,7 @@ export const Braunschweig: Config = {
  export const Neustadt: Config = {
     ...Empty,
     city: "Neustadt",    
-    bgColor: "bg-green-700",
+    bgColor: "bg-sky-700",
     showHolyDay: true,
     showHighlight: true,
     sabah: -30,

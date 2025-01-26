@@ -15,7 +15,9 @@ object SystemUtils {
     fun on() {
         Log.e("System", "On")
         if (RootShell.supported) {
-            runBlocking { RootShell.exec("mt8127_hdmi init 1") }
+            runBlocking { RootShell.exec("mt8127_hdmi init 1") } // Fire TV with LineageOS
+        }else if(Shell.supported){
+            runBlocking { Shell.exec("input keyevent 26") } // Android TV (without Stick)
         }
     }
 
@@ -23,20 +25,21 @@ object SystemUtils {
     fun off() {
         Log.e("System", "Off")
         if (RootShell.supported) {
-            runBlocking { RootShell.exec("mt8127_hdmi init 0") }
+            runBlocking { RootShell.exec("mt8127_hdmi init 0") } // Fire TV with LineageOS
+        }else if(Shell.supported){
+            runBlocking { Shell.exec("input keyevent 26") } // Android TV (without Stick)
         }
     }
 
 
     suspend fun init() {
         Log.e("System", "init")
-        Shell.exec("pm list packages | grep launcher | cut -d\":\" -f2 | xargs pm enable")
+        Shell.exec("pm grant org.metinkale.mosquesignage android.permission.SYSTEM_ALERT_WINDOW")
+        Shell.exec("pm grant org.metinkale.mosquesignage android.permission.WRITE_EXTERNAL_STORAGE")
         Shell.exec("settings put secure screensaver_enabled 0")
         Shell.exec("settings put secure screensaver_timeout 0")
         Shell.exec("settings put system screen_off_timeout 2147483647")
         Shell.exec("settings put secure sleep_timeout 2147483647")
-        Shell.exec("pm grant ${App.packageName} android.permission.SYSTEM_ALERT_WINDOW")
-        Shell.exec("pm grant ${App.packageName} android.permission.WRITE_EXTERNAL_STORAGE")
     }
 
     suspend fun startActivity() {

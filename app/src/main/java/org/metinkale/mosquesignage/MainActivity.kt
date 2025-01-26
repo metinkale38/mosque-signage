@@ -24,6 +24,7 @@ import kotlin.apply
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch { SystemUtils.init() }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (App.config.isEmpty()) {
@@ -31,7 +32,6 @@ class MainActivity : ComponentActivity() {
         } else {
             OverlayService.start(this)
             setContentView(ListView(this).init())
-            lifecycleScope.launch { SystemUtils.init() }
         }
     }
 
