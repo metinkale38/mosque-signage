@@ -9,7 +9,7 @@ import java.net.URL
 import java.security.MessageDigest
 import java.util.Locale
 
-suspend fun sync(remote: String, www: File, hostname: String): Boolean {
+suspend fun sync(remote: String, www: File, hostname: String): Boolean = runCatching {
     var reloadNeeded = false
 
     if (!www.exists()) www.mkdirs()
@@ -51,11 +51,11 @@ suspend fun sync(remote: String, www: File, hostname: String): Boolean {
         }
     }
 
-    return reloadNeeded
-}
+    reloadNeeded
+}.getOrElse { false }
 
 private suspend fun fetchRemoteHashes(url: String): List<String> = withContext(Dispatchers.IO) {
-    Log.e("Sync","fetchRemoteHashes")
+    Log.e("Sync", "fetchRemoteHashes")
     val connection = URL(url).openConnection() as HttpURLConnection
     connection.inputStream.bufferedReader().readLines().also {
         connection.disconnect()
@@ -71,7 +71,7 @@ private fun parseRemoteHashes(lines: List<String>): Map<String, String> {
 }
 
 private suspend fun downloadFile(url: String, destination: File) = withContext(Dispatchers.IO) {
-    Log.e("Sync","downloadFile $url")
+    Log.e("Sync", "downloadFile $url")
     val connection = URL(url).openConnection() as HttpURLConnection
     connection.inputStream.use { input ->
         destination.outputStream().use { output ->

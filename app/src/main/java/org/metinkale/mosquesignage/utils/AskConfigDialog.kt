@@ -20,7 +20,7 @@ fun Context.askConfigDialog() {
     builder.setPositiveButton("OK") { dialog, _ ->
         val userInput = input.text.toString()
         App.config = userInput.lowercase()
-        OverlayService.Companion.restart()
+        OverlayService.Companion.restart(this)
     }
 
     builder.setNegativeButton("Cancel") { dialog, _ ->

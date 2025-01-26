@@ -1,8 +1,11 @@
 package org.metinkale.mosquesignage
 
 import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.PixelFormat
@@ -17,12 +20,12 @@ import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
+import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.metinkale.mosquesignage.utils.SystemUtils
 import org.metinkale.mosquesignage.utils.WebServer
-import org.metinkale.mosquesignage.utils.checkAndUpdateApp
 import org.metinkale.mosquesignage.utils.sync
 import java.io.File
 import java.util.Calendar
@@ -43,9 +46,23 @@ class OverlayService : Service() {
     override fun onCreate() {
         super.onCreate()
         if (App.config.isEmpty() || !App.enabled ||
-            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this))) {
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this))
+        ) {
             stopSelf()
             return
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val channel = NotificationChannel("channel", "channel", NotificationManager.IMPORTANCE_HIGH)
+            manager.createNotificationChannel(channel)
+            startForeground(
+                1,
+                NotificationCompat.Builder(this, "channel")
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentTitle("MosqueSignage")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
+            )
         }
 
         GlobalScope.launch { SystemUtils.startActivity() }
@@ -79,7 +96,8 @@ class OverlayService : Service() {
 
 
         signageView = SignageWebView()
-        signageView?.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        signageView?.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         windowManager.addView(signageView, layoutParams)
         signageView?.setFocusableInTouchMode(true);
         signageView?.isFocusable = true
@@ -110,6 +128,7 @@ class OverlayService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         running = false
+        stopForeground(true)
 
         if (signageView != null) {
             windowManager.removeView(signageView)
@@ -135,7 +154,7 @@ class OverlayService : Service() {
                 triggerAtMillis,
                 pendingIntent
             )
-        }else{
+        } else {
             alarmManager.setExact(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 triggerAtMillis,
@@ -150,11 +169,9 @@ class OverlayService : Service() {
         if (App.config.isNotEmpty()) {
             GlobalScope.launch {
                 if (sync(App.remoteHost, www, App.hostname))
-                    restart()
+                    restart(this@OverlayService)
             }
         }
-
-        GlobalScope.launch { checkAndUpdateApp(App.ctx) }
 
         handler.postDelayed(syncAsync, 1000 * 60 * 30)
     }
@@ -173,7 +190,7 @@ class OverlayService : Service() {
         val delayMillis = calendar.timeInMillis - System.currentTimeMillis()
 
         handler.postDelayed({
-            restart()
+            restart(this)
         }, delayMillis)
     }
 
@@ -184,10 +201,18 @@ class OverlayService : Service() {
 
     companion object {
         var running = false
-        fun restart() {
-            val ctx = App.ctx
+        fun restart(ctx: Context) {
             ctx.stopService(Intent(ctx, OverlayService::class.java))
-            ctx.startService(Intent(ctx, OverlayService::class.java))
+            start(ctx)
+        }
+
+        fun start(ctx: Context) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                ctx.startForegroundService(Intent(ctx, OverlayService::class.java))
+            } else {
+                ctx.startService(Intent(ctx, OverlayService::class.java))
+            }
+
         }
     }
 }

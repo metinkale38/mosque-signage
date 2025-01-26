@@ -27,19 +27,6 @@ object SystemUtils {
         }
     }
 
-    suspend fun installApk(fileName: String) {
-        Log.e("System", "installApk $fileName")
-        Shell.exec("rm /data/local/tmp/$fileName")
-        Shell.exec("mv /sdcard/Download/$fileName /data/local/tmp/")
-        Shell.exec("sh -c \"pm install /data/local/tmp/$fileName && am start -n ${App.packageName}/.MainActivity\" &")
-    }
-
-
-    suspend fun delete(path: String) {
-        Log.e("System", "delete $path")
-        Shell.exec("rm $path")
-    }
-
 
     suspend fun init() {
         Log.e("System", "init")

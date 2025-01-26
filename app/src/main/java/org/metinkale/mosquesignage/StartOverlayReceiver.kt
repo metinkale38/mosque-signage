@@ -7,19 +7,22 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 
 class StartOverlayReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
+        Log.e("StartOverlayReceiver", "onReceive")
         if (isInternetAvailable(context)) {
             if (!OverlayService.running) {
                 App.enabled = true
-                OverlayService.restart()
-            }
-        }
+                OverlayService.restart(context)
+            } else Log.e("StartOverlayReceiver", "already running")
+        } else Log.e("StartOverlayReceiver", "no internet")
     }
 
     fun isInternetAvailable(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         // Für Android 10 (API-Level 29) und höher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

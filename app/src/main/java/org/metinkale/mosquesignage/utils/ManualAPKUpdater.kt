@@ -10,10 +10,14 @@ import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.io.BufferedReader
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStreamReader
 import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
@@ -37,7 +41,7 @@ class ManualAPKUpdater(private var context: Context) {
             val newVersionCode = jsonObject.getInt("versionCode")
             val apkUrl = jsonObject.getString("url")
 
-            if (newVersionCode > currentVersionCode) {
+            if (newVersionCode > currentVersionCode || true) {
                 // Neue Version gefunden, APK herunterladen und installieren
                 Toast.makeText(context, "New Version found", Toast.LENGTH_SHORT).show()
                 DownloadNewVersion(
@@ -52,6 +56,30 @@ class ManualAPKUpdater(private var context: Context) {
             Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
         }
     }
+
+    suspend fun fetchJson(urlString: String): String? = withContext(Dispatchers.IO) {
+        Log.e("ManualAPKUpdater", "fetchJson")
+        try {
+            val url = URL(urlString)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "GET"
+
+            val reader = BufferedReader(InputStreamReader(connection.inputStream))
+            val response = StringBuilder()
+            var line: String?
+            while (reader.readLine().also { line = it } != null) {
+                response.append(line)
+            }
+            reader.close()
+            connection.disconnect()
+
+            response.toString()
+        } catch (e: Exception) {
+            Log.e("ManualAPKUpdater", "fetchJson failed", e)
+            null
+        }
+    }
+
 
     @Suppress("DEPRECATION")
     private class DownloadNewVersion(

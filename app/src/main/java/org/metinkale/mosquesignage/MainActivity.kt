@@ -3,11 +3,15 @@ package org.metinkale.mosquesignage
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import android.graphics.Color
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -25,17 +29,14 @@ class MainActivity : ComponentActivity() {
         if (App.config.isEmpty()) {
             askConfigDialog()
         } else {
-            val intent = Intent(this, OverlayService::class.java)
-            startService(intent)
+            OverlayService.start(this)
             setContentView(ListView(this).init())
-
-
             lifecycleScope.launch { SystemUtils.init() }
         }
     }
 
     private fun ListView.init() = apply {
-        keepScreenOn = true
+
         val versionCode = try {
             val pInfo = packageManager.getPackageInfo(packageName, 0)
             pInfo.versionCode
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
         val options: Array<Pair<String, () -> Unit>> = arrayOf(
             "Start" to {
                 App.enabled = true
-                OverlayService.restart()
+                OverlayService.restart(this@MainActivity)
                 recreate()
             },
             "Config" to { askConfigDialog() },
@@ -55,7 +56,7 @@ class MainActivity : ComponentActivity() {
                 val prefs = getSharedPreferences("prefs", MODE_PRIVATE)
                 val current = prefs.getInt("rotate", 0)
                 prefs.edit().putInt("rotate", (current + 90) % 360).apply()
-                OverlayService.restart()
+                OverlayService.restart(this@MainActivity)
             },
             "Update App ($versionCode)" to {
                 lifecycleScope.launch {

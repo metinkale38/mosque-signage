@@ -19,6 +19,10 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:ignore="ProtectedPermissions"/>
 
 
@@ -44,13 +48,6 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".utils.DownloadCompleteReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
-            </intent-filter>
-        </receiver>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -60,7 +57,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        <service android:name=".OverlayService" />
+        <service android:name=".OverlayService" android:foregroundServiceType="specialUse"/>
 
         <receiver android:name=".StartOverlayReceiver" android:exported="true">
             <intent-filter>
