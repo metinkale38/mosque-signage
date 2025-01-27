@@ -18,39 +18,39 @@ export enum HijriMonth {
 
 
 export async function getHolyDay(date: HijriDate) {
-    if (date.month === HijriMonth.MUHARRAM && date.day === 1) return Text.ISLAMIC_NEW_YEAR;
-    if (date.month === HijriMonth.MUHARRAM && date.day === 10) return Text.ASHURA;
-    if (date.month === HijriMonth.RABIAL_AWWAL && date.day === 11) return Text.MAWLID_AL_NABI;
-    if (date.month === HijriMonth.RAJAB && date.day === 1) return Text.THREE_MONTHS;
+    if (date.month === HijriMonth.MUHARRAM && date.day === 1) return Text.HijriDays.ISLAMIC_NEW_YEAR;
+    if (date.month === HijriMonth.MUHARRAM && date.day === 10) return Text.HijriDays.ASHURA;
+    if (date.month === HijriMonth.RABIAL_AWWAL && date.day === 11) return Text.HijriDays.MAWLID_AL_NABI;
+    if (date.month === HijriMonth.RAJAB && date.day === 1) return Text.HijriDays.THREE_MONTHS;
 
     if (date.moment.weekday() === 3/*THURSDAY*/) {
 
-        if (date.month === HijriMonth.RAJAB && date.day <= 6) return Text.RAGAIB
+        if (date.month === HijriMonth.RAJAB && date.day <= 6) return Text.HijriDays.RAGAIB
         else if (date.month === HijriMonth.JUMADAAL_AKHIR && date.day >= 29) {
             // it might be Rajab only if its the last day of the month
             if((await toHijri(date.moment.add(1,"days"))).month === HijriMonth.RAJAB){
-                return Text.RAGAIB
+                return Text.HijriDays.RAGAIB
             }
         }
     }
 
 
-    if (date.month === HijriMonth.RAJAB && date.day === 26) return Text.MIRAJ;
-    if (date.month === HijriMonth.SHABAN && date.day === 14) return Text.BARAAH;
-    if (date.month === HijriMonth.RAMADAN && date.day === 1) return Text.RAMADAN_BEGIN;
-    if (date.month === HijriMonth.RAMADAN && date.day === 26) return Text.LAYLATALQADR;
+    if (date.month === HijriMonth.RAJAB && date.day === 26) return Text.HijriDays.MIRAJ;
+    if (date.month === HijriMonth.SHABAN && date.day === 14) return Text.HijriDays.BARAAH;
+    if (date.month === HijriMonth.RAMADAN && date.day === 1) return Text.HijriDays.RAMADAN_BEGIN;
+    if (date.month === HijriMonth.RAMADAN && date.day === 26) return Text.HijriDays.LAYLATALQADR;
 
     let tomorrow = await toHijri(date.moment.add(1, "days"))
-    if (tomorrow.month === HijriMonth.SHAWWAL && tomorrow.day === 1) return Text.LAST_RAMADAN;
+    if (tomorrow.month === HijriMonth.SHAWWAL && tomorrow.day === 1) return Text.HijriDays.LAST_RAMADAN;
 
-    if (date.month === HijriMonth.SHAWWAL && date.day === 1) return Text.EID_AL_FITR_DAY1;
-    if (date.month === HijriMonth.SHAWWAL && date.day === 2) return Text.EID_AL_FITR_DAY2;
-    if (date.month === HijriMonth.SHAWWAL && date.day === 3) return Text.EID_AL_FITR_DAY3;
-    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 9) return Text.ARAFAT;
-    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 10) return Text.EID_AL_ADHA_DAY1;
-    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 11) return Text.EID_AL_ADHA_DAY2;
-    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 12) return Text.EID_AL_ADHA_DAY3;
-    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 13) return Text.EID_AL_ADHA_DAY4;
+    if (date.month === HijriMonth.SHAWWAL && date.day === 1) return Text.HijriDays.EID_AL_FITR_DAY1;
+    if (date.month === HijriMonth.SHAWWAL && date.day === 2) return Text.HijriDays.EID_AL_FITR_DAY2;
+    if (date.month === HijriMonth.SHAWWAL && date.day === 3) return Text.HijriDays.EID_AL_FITR_DAY3;
+    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 9) return Text.HijriDays.ARAFAT;
+    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 10) return Text.HijriDays.EID_AL_ADHA_DAY1;
+    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 11) return Text.HijriDays.EID_AL_ADHA_DAY2;
+    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 12) return Text.HijriDays.EID_AL_ADHA_DAY3;
+    if (date.month === HijriMonth.DHUL_HIJJA && date.day === 13) return Text.HijriDays.EID_AL_ADHA_DAY4;
 
 }
 export class HijriDate {

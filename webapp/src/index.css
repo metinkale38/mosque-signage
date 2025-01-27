@@ -2,19 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @media (orientation: landscape) {
-  .grid-cols-custom{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
   html{
     font-size: 1vmin;
   }
 }
 
 @media (orientation: portrait) {
-  .grid-cols-custom{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   html{
     font-size: 1.1vmin;
   }
@@ -66,9 +61,9 @@ code {
   animation-timing-function: linear;
 }
 @keyframes hueRotate {
-    0% {  filter: hue-rotate(25deg) grayscale(0); }
-    25%   {  filter: hue-rotate(-25deg) grayscale(0); }
-    50% {  filter: hue-rotate(25deg) grayscale(1); }
-    75%   {  filter: hue-rotate(-25deg) grayscale(0); }
-    100% {  filter: hue-rotate(25deg) grayscale(0); }
+    0% {  filter: hue-rotate(20deg) grayscale(0); }
+    25%   {  filter: hue-rotate(-20deg) grayscale(0); }
+    50% {  filter: hue-rotate(20deg) grayscale(0.5); }
+    75%   {  filter: hue-rotate(-20deg) grayscale(0); }
+    100% {  filter: hue-rotate(20deg) grayscale(0); }
 }

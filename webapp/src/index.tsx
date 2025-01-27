@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import PrayerTimes from './prayertimes/PrayerTimes';
 import Dashboard from './dashboard/Dashboard';
-import { Braunschweig, Default, Goslar, Neustadt } from './prayertimes/config';
+import { Braunschweig, Default, DITIBBraunschweig, Goslar, IGBDBraunschweig, Neustadt } from './prayertimes/config';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -22,6 +22,8 @@ function Router() {
     case "?transparentprayertimes": return (<PrayerTimes transparent={true} config={Braunschweig} />)
     case "?prayertimes": return (<PrayerTimes  config={Default}/>)
     case "?braunschweig": return (<PrayerTimes  config={Braunschweig}/>)
+    case "?ditibbs": return (<PrayerTimes  config={DITIBBraunschweig}/>)
+    case "?igbdbs": return (<PrayerTimes  config={IGBDBraunschweig}/>)
     case "?neustadt": return (<PrayerTimes config={Neustadt}/>)
     case "?goslar": return (<PrayerTimes config={Goslar}/>)
     case "?dashboard": return (<Dashboard />)

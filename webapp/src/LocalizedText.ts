@@ -1,97 +1,80 @@
 import { HijriDate } from "./prayertimes/HijriDate";
+import 'moment/locale/bs';
+import 'moment/locale/de';
+import 'moment/locale/tr';
 
-export enum Language { de = 0, tr = 1, _LENGTH }
-
-export class LocalizedText {
-    de: string = ""
-    tr: string = ""
-
-    constructor(de: string, tr: string) {
-        this.de = de;
-        this.tr = tr;
-    }
-
-    get(lang: Language) {
-        switch (lang) {
-            case Language.de: return this.de;
-            case Language.tr: return this.tr;
-        }
-        return this.tr;
-    }
-}
-
-const PrayerTimes = {
-    FAJR: new LocalizedText("Fajr", "İmsak"),
-    SABAH: new LocalizedText("Morgengebet", "Sabah"),
-    CUMA: new LocalizedText("Freitagsgebet", "Cuma Namazı"),
-    SUN: new LocalizedText("Sonne", "Güneş"),
-    DHUHR: new LocalizedText("Dhuhr", "Öğle"),
-    ASR: new LocalizedText("Asr", "İkindi"),
-    MAGHRIB: new LocalizedText("Maghrib", "Akşam"),
-    ISHAA: new LocalizedText("Ishaa", "Yatsı"),
-}
-
-const CurrentPrayerTime = {
-    FAJRPRAYER: new LocalizedText("Morgengebet", "Sabah Namazı"),
-    CUMAPRAYER: new LocalizedText("Freitagsgebet", "Cuma Namazı"),
-    DHUHRPRAYER: new LocalizedText("Dhuhr Gebet", "Öğle Namazı"),
-    ASRPRAYER: new LocalizedText("Asr Gebet", "İkindi Namazı"),
-    MAGHRIBPRAYER: new LocalizedText("Maghrib Gebet", "Akşam Namazı"),
-    ISHAAPRAYER: new LocalizedText("Ishaa Gebet", "Yatsı Namazı"),
-}
-const HijriMonths = {
-    MUHARRAM: new LocalizedText("Muharram", "Muharrem"),
-    SAFAR: new LocalizedText("Safar", "Safer"),
-    RABIALAWWAL: new LocalizedText("Rabi al-awwal", "Rebiülevvel"),
-    RABIALAKHIR: new LocalizedText("Rabi al-achir", "Rebiülahir"),
-    JAMAZIALAWWAL: new LocalizedText("Dschumada al-awwal", "Cemaziyelevvel"),
-    JAMAZIALAKHIR: new LocalizedText("Dschumada l-achira", "Cemaziyelahir"),
-    RAJAB: new LocalizedText("Rajab", "Recep"),
-    SHABAN: new LocalizedText("Schaban", "Şaban"),
-    RAMADAN: new LocalizedText("Ramadan", "Ramazan"),
-    SHAVVAL: new LocalizedText("Schawwal", "Şevval"),
-    DHULQAD: new LocalizedText("Dhu l-qaʿda", "Zilkade"),
-    DHULHIJJA: new LocalizedText("Dhū l-Hiddscha", "Zilhicce")
-}
-
-let HijriDays = {
-    ISLAMIC_NEW_YEAR: new LocalizedText("Islamisches Neujahr", "Hicri Yılbaşı"),
-    ASHURA: new LocalizedText("Aschûra", "Aşure"),
-    MAWLID_AL_NABI: new LocalizedText("Mawlid an-Nabawi", "Mevlid Kandili"),
-    THREE_MONTHS: new LocalizedText("Der Beginn der gesegneten Drei Monate", "Mübârek 3 ayların başlangıcı"),
-    RAGAIB: new LocalizedText("Regâib-Nacht", "Regaib Kandili"),
-    MIRAJ: new LocalizedText("Mirâdsch-Nacht", "Mirac Kandili"),
-    BARAAH: new LocalizedText("Berât-Nacht", "Beraat Kandili"),
-    RAMADAN_BEGIN: new LocalizedText("Der Beginn des Ramadan", "Ramazan'ın başlangıcı"),
-    LAYLATALQADR: new LocalizedText("Kadr-Nacht", "Kadir Gecesi"),
-    LAST_RAMADAN: new LocalizedText("Arafah vom Ramadanfest", "Arefe Günü"),
-    EID_AL_FITR_DAY1: new LocalizedText("Ramadanfest 1.Tag", "Ramazan Bayramının 1.Günü"),
-    EID_AL_FITR_DAY2: new LocalizedText("Ramadanfest 2.Tag", "Ramazan Bayramının 2.Günü"),
-    EID_AL_FITR_DAY3: new LocalizedText("Ramadanfest 3.Tag", "Ramazan Bayramının 3.Günü"),
-    ARAFAT: new LocalizedText("Arafah", "Arefe Günü"),
-    EID_AL_ADHA_DAY1: new LocalizedText("Opferfest 1.Tag", "Kurban Bayramının 1.Günü"),
-    EID_AL_ADHA_DAY2: new LocalizedText("Opferfest 2.Tag", "Kurban Bayramının 2.Günü"),
-    EID_AL_ADHA_DAY3: new LocalizedText("Opferfest 3.Tag", "Kurban Bayramının 3.Günü"),
-    EID_AL_ADHA_DAY4: new LocalizedText("Opferfest 4.Tag", "Kurban Bayramının 4.Günü"),
-}
-
-
-
+export type LocalizedText = { de: string, tr: string, bs: string }
 
 export const Text = {
-    ...PrayerTimes,
-    ...HijriMonths,
-    ...HijriDays,
-    ...CurrentPrayerTime,
+
+    PrayerTimes: {
+        FAJR: { de: "Fajr", tr: "İmsak", bs: "Zora" },
+        SABAH: { de: "Morgengebet", tr: "Sabah", bs: "Sabah" },
+        CUMA: { de: "Freitagsgebet", tr: "Cuma Namazı", bs: "Džuma" },
+        SUN: { de: "Sonne", tr: "Güneş", bs: "Sunce" },
+        DHUHR: { de: "Dhuhr", tr: "Öğle", bs: "Podne" },
+        ASR: { de: "Asr", tr: "İkindi", bs: "Ikindija" },
+        MAGHRIB: { de: "Maghrib", tr: "Akşam", bs: "Akšam" },
+        ISHAA: { de: "Ishaa", tr: "Yatsı", bs: "Jacija" },
+    },
+    CurrentPrayerTime: {
+        FAJR: { de: "Morgengebet", tr: "Sabah Namazı", bs: "Sabah-namaz" },
+        CUMA: { de: "Freitagsgebet", tr: "Cuma Namazı", bs: "Džuma-namaz" },
+        DHUHR: { de: "Dhuhr Gebet", tr: "Öğle Namazı", bs: "Podne-namaz" },
+        ASR: { de: "Asr Gebet", tr: "İkindi Namazı", bs: "Ikindija-namaz" },
+        MAGHRIB: { de: "Maghrib Gebet", tr: "Akşam Namazı", bs: "Akšam-namaz" },
+        ISHAA: { de: "Ishaa Gebet", tr: "Yatsı Namazı", bs: "Jacija-namaz" },
+    },
+    HijriMonths: {
+        MUHARRAM: { de: "Muharram", tr: "Muharrem", bs: "Muharrem" },
+        SAFAR: { de: "Safar", tr: "Safer", bs: "Safer" },
+        RABIALAWWAL: { de: "Rabi al-awwal", tr: "Rebiülevvel", bs: "Rebiul-evvel" },
+        RABIALAKHIR: { de: "Rabi al-achir", tr: "Rebiülahir", bs: "Rebiul-ahir" },
+        JAMAZIALAWWAL: { de: "Dschumada al-awwal", tr: "Cemaziyelevvel", bs: "Džumadel-ula" },
+        JAMAZIALAKHIR: { de: "Dschumada l-achira", tr: "Cemaziyelahir", bs: "Džumadel-uhra" },
+        RAJAB: { de: "Rajab", tr: "Recep", bs: "Redžeb" },
+        SHABAN: { de: "Schaban", tr: "Şaban", bs: "Ša'ban" },
+        RAMADAN: { de: "Ramadan", tr: "Ramazan", bs: "Ramazan" },
+        SHAVVAL: { de: "Schawwal", tr: "Şevval", bs: "Ševval" },
+        DHULQAD: { de: "Dhu l-qaʿda", tr: "Zilkade", bs: "Zul-ka'de" },
+        DHULHIJJA: { de: "Dhū l-Hiddscha", tr: "Zilhicce", bs: "Zul-hidždže" }
+    },
+
+    HijriDays: {
+        ISLAMIC_NEW_YEAR: { de: "Islamisches Neujahr", tr: "Hicri Yılbaşı", bs: "Nova hidžretska godina" },
+        ASHURA: { de: "Aschûra", tr: "Aşure", bs: "Ašura" },
+        MAWLID_AL_NABI: { de: "Mawlid an-Nabawi", tr: "Mevlid Kandili", bs: "Mevlud" },
+        THREE_MONTHS: { de: "Der Beginn der gesegneten Drei Monate", tr: "Mübârek 3 ayların başlangıcı", bs: "Početak tri sveta mjeseca" },
+        RAGAIB: { de: "Regâib-Nacht", tr: "Regaib Kandili", bs: "Lejletu-r-regaib" },
+        MIRAJ: { de: "Mirâdsch-Nacht", tr: "Mirac Kandili", bs: "Lejletu-l-mi'radž" },
+        BARAAH: { de: "Berât-Nacht", tr: "Beraat Kandili", bs: "Lejletu-l-berat" },
+        RAMADAN_BEGIN: { de: "Der Beginn des Ramadan", tr: "Ramazan'ın başlangıcı", bs: "Početak ramazana" },
+        LAYLATALQADR: { de: "Kadr-Nacht", tr: "Kadir Gecesi", bs: "Lejletu-l-Kadr" },
+        LAST_RAMADAN: { de: "Arafah vom Ramadanfest", tr: "Arefe Günü", bs: "Ramazanski Arefat" },
+        EID_AL_FITR_DAY1: { de: "Ramadanfest 1.Tag", tr: "Ramazan Bayramının 1.Günü", bs: "Ramazanski bajram, 1. dan" },
+        EID_AL_FITR_DAY2: { de: "Ramadanfest 2.Tag", tr: "Ramazan Bayramının 2.Günü", bs: "Ramazanski bajram, 2. dan" },
+        EID_AL_FITR_DAY3: { de: "Ramadanfest 3.Tag", tr: "Ramazan Bayramının 3.Günü", bs: "Ramazanski bajram, 3. dan" },
+        ARAFAT: { de: "Arafah", tr: "Arefe Günü", bs: "Dan Arefata" },
+        EID_AL_ADHA_DAY1: { de: "Opferfest 1.Tag", tr: "Kurban Bayramının 1.Günü", bs: "Kurban bajram, 1. dan" },
+        EID_AL_ADHA_DAY2: { de: "Opferfest 2.Tag", tr: "Kurban Bayramının 2.Günü", bs: "Kurban bajram, 2. dan" },
+        EID_AL_ADHA_DAY3: { de: "Opferfest 3.Tag", tr: "Kurban Bayramının 3.Günü", bs: "Kurban bajram, 3. dan" },
+        EID_AL_ADHA_DAY4: { de: "Opferfest 4.Tag", tr: "Kurban Bayramının 4.Günü", bs: "Kurban bajram, 4. dan" },
+    },
+
 
     forHijriDate(date: HijriDate) {
-        let month = Object.values(HijriMonths)[(date.month-1)%12];
-        return new LocalizedText(date.day + " " + month.de + " " + date.year, date.day + " " + month.tr + " " + date.year)
+        let month = Object.values(Text.HijriMonths)[(date.month - 1) % 12];
+        return {
+            de: date.day + " " + month.de + " " + date.year,
+            tr: date.day + " " + month.tr + " " + date.year,
+            bs: date.day + " " + month.bs + " " + date.year
+        }
     },
     forMoment(date: moment.Moment) {
         let dateTr = date.locale("tr").format("DD MMMM YYYY");
         let dateDe = date.locale("de").format("DD MMMM YYYY");
-        return new LocalizedText(dateDe, dateTr)
+        let dateBs = date.locale("bs").format("DD MMMM YYYY");
+        return { de: dateDe, tr: dateTr, bs: dateBs }
     }
 
 }

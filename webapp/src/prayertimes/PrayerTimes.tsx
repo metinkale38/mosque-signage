@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { PrayerTimesData, determineScreenStatus, getPrayerTimesData, updatePrayerTimesData } from './PrayerTimesData';
-import { Language, LocalizedText } from '../LocalizedText';
 import { Default } from './config';
 import { ScreenControl } from './ScreenControl';
+import "./PrayerTimes.css"
+import { LocalizedText } from '../LocalizedText';
 
 const PrayerTimes = ({ transparent = false, config = Default }) => {
   let [data, setData] = useState<PrayerTimesData>(new PrayerTimesData())
 
-  let [lang, setLang] = useState(Language.tr);
+  let [lang, setLang] = useState(0);
 
   let [screenOn, setScreenOn] = useState<boolean | undefined>(undefined)
 
@@ -15,11 +16,11 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLang((lang + 1) % Language._LENGTH);
-      if (lang === Language.de) setAlternativeTime(!alternativeTime);
+      setLang((lang + 1) % config.languages.length);
+      if (lang === 0) setAlternativeTime(!alternativeTime);
     }, 10000);
     return () => clearInterval(interval);
-  }, [lang, alternativeTime]);
+  }, [lang, alternativeTime, config.languages]);
 
   useEffect(() => {
     getPrayerTimesData(config).then(data => setData(data));
@@ -31,7 +32,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
       if (config.screenOnOff) {
         var screenState = determineScreenStatus(data)
         if (screenState !== screenOn) {
-          if (screenState){
+          if (screenState) {
             ScreenControl.on();
           } else {
             ScreenControl.off();
@@ -44,84 +45,84 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
   }, [data, screenOn, config.screenOnOff]);
 
   function render(text: LocalizedText) {
-    if (lang === Language.de) return <>{text.de}</>; else return <>{text.tr}</>;
-  }
+    return <>{(text as any)[config.languages[lang]]}</>
+   }
 
   let notTransparent = !transparent;
 
   return (
     <div className='h-full relative'>
       <div className={'absolute left-0 top-0 right-0 bottom-0 ' + config.bgColor + ' preventBurnInHue'}></div>
-      <div className='absolute left-0 top-0 right-0 bottom-0'>      <div className={"flex flex-col h-full text-center text-white justify-around py-[2rem] " + (notTransparent ? ' preventBurnInMove' : '')}>
-        {
-          data.holyDay != null ?
-            (<p className={"bg-sky-600 p-[1.5rem] text-white text-center font-medium col-span-2 -mx-[2rem] -mt-[2rem] text-[4rem] [line-height:1] flex justify-center items-center"}>
-              {render(data.holyDay!!)}
-            </p>) : <></>
-        }
-        <p className='flex items-center justify-center italic text-[6.5rem] [line-height:1.4] col-span-2 text-ellipsis overflow-hidden block'>{render(data.date)}</p>
-        <p className='flex items-center justify-center text-[22rem] [line-height:1] col-span-2'>{data.time}</p>
-        <p className='flex items-center justify-center italic text-[6.5rem] [line-height:1.4] col-span-2 text-ellipsis overflow-hidden block'>{render(data.hijri)}</p>
+      <div className={'absolute left-0 top-0 right-0 bottom-0 ' +config.style}>
+        <div className={ " parent  " + (notTransparent ? ' preventBurnInMove' : '')}>
+          {
+            data.holyDay != null ?
+              (<p className={"holyday"}>
+                {render(data.holyDay!!)}
+              </p>) : <></>
+          }
+          <p className='date'>{render(data.date)}</p>
+          <p className='clock'>{data.time}</p>
+          <p className='date'>{render(data.hijri)}</p>
 
-        {
-          data.highlight ?
-            (<div className='grid grid-cols-3 px-[2rem] gap-[2rem]'>
-              <div className={"flex flex-col gap-[1rem] bg-black/10 pb-[2rem] col-span-3"}>
-                <div className='flex justify-center text-center [font-size:8rem]'>{render(data.highlight.name)}</div>
-                <div className='flex justify-center text-center'><img alt="silent" className='w-[21rem]' src='silent.svg' /></div>
-              </div>
-              {
-                data.times.map((element, idx) => {
+          {
+            data.highlight ?
+              (<div className='grid grid-cols-3 px-[2rem] gap-[2rem]'>
+                <div className={"flex flex-col gap-[1rem] bg-black/10 pb-[2rem] col-span-3"}>
+                  <div className='flex justify-center text-center [font-size:8rem]'>{render(data.highlight.name)}</div>
+                  <div className='flex justify-center text-center'><img alt="silent" className='w-[21rem]' src='silent.svg' /></div>
+                </div>
+                {
+                  data.times.map((element, idx) => {
 
-                  if (alternativeTime) {
-                    if (idx === 1 && data.sabah != null) {
-                      element = data.sabah;
+                    if (alternativeTime) {
+                      if (idx === 1 && data.sabah != null) {
+                        element = data.sabah;
+                      }
+                      else if (idx === 2 && data.cuma != null) {
+                        element = data.cuma;
+                      }
                     }
-                    else if (idx === 2 && data.cuma != null) {
-                      element = data.cuma;
+
+                    let selectionStyle = data.selectionIdx === idx ? " bg-white text-black font-medium" : " bg-black/10"
+
+                    return (
+                      <div key={element.name.de.toLocaleLowerCase()} className={"flex flex-col w-full p-[1rem] h-max " + selectionStyle}>
+                        <div className='flex justify-center text-center [font-size:5rem] [line-height:1]'>{element.time}</div>
+                        <div className='flex justify-center text-center [font-size:3rem] [line-height:1] pb-[1rem] pt-[1rem]'>{render(element.name)}</div>
+                      </div>
+                    )
+                  })
+                }</div>)
+              :
+              (<><div className='timesGrid'>
+                {
+                  data.times.map((element, idx) => {
+
+                    if (alternativeTime) {
+                      if (idx === 1 && data.sabah != null) {
+                        element = data.sabah;
+                      }
+                      else if (idx === 2 && data.cuma != null) {
+                        element = data.cuma;
+                      }
                     }
-                  }
 
-                  let selectionStyle = data.selectionIdx === idx ? " bg-white text-black font-medium" : " bg-black/10"
+                    return (
+                      <div key={element.name.de.toLocaleLowerCase()} className={"timeBox " + (data.selectionIdx === idx ? "selected" : "")}>
+                         <div className='name'>{render(element.name)}</div>
+                         <div className='time'>{element.time}</div>
+                      </div>
+                    )
+                  })
+                }</div>
 
-                  return (
-                    <div key={element.name.de.toLocaleLowerCase()} className={"flex flex-col w-full p-[1rem] h-max " + selectionStyle}>
-                      <div className='flex justify-center text-center [font-size:5rem] [line-height:1]'>{element.time}</div>
-                      <div className='flex justify-center text-center [font-size:3rem] [line-height:1] pb-[1rem] pt-[1rem]'>{render(element.name)}</div>
-                    </div>
-                  )
-                })
-              }</div>)
-            :
-            (<><div className='grid grid-cols-custom px-[2rem] gap-[2rem]'>
-              {
-                data.times.map((element, idx) => {
-
-                  if (alternativeTime) {
-                    if (idx === 1 && data.sabah != null) {
-                      element = data.sabah;
-                    }
-                    else if (idx === 2 && data.cuma != null) {
-                      element = data.cuma;
-                    }
-                  }
-
-                  let selectionStyle = data.selectionIdx === idx ? " bg-white text-black font-medium" : " bg-black/10"
-
-                  return (
-                    <div key={element.name.de.toLocaleLowerCase()} className={"flex flex-col w-full p-[1rem] h-max " + selectionStyle}>
-                      <div className='flex justify-center text-center [font-size:10rem] [line-height:1]'>{element.time}</div>
-                      <div className='flex justify-center text-center [font-size:6rem] [line-height:1] pb-[1rem] pt-[1rem]'>{render(element.name)}</div>
-                    </div>
-                  )
-                })
-              }</div>
-
-            </>)
-        }
-        <p className='text-[12rem] [line-height:1] flex items-center justify-center col-span-2'>{data.countdown}</p>
+              </>)
+          }
+          <p className='countdown'>{data.countdown}</p>
+        </div>
       </div>
-      </div></div>
+    </div>
 
   )
 }

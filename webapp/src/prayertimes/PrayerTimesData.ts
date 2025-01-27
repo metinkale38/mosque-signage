@@ -7,14 +7,14 @@ import moment from 'moment'
 import { Config } from './config'
 
 export class PrayerTime {
-  name: LocalizedText = new LocalizedText("", "")
+  name: LocalizedText = {de:"", tr:"", bs: ""}
   time: string = "00:00"
 }
 
 export class PrayerTimesData {
   city: string = ""
-  date: LocalizedText = new LocalizedText("", "")
-  hijri: LocalizedText = new LocalizedText("", "")
+  date: LocalizedText = {de:"", tr:"", bs: ""}
+  hijri: LocalizedText = {de:"", tr:"", bs: ""}
   holyDay: LocalizedText | undefined = undefined
   times: Array<PrayerTime> = []
   sabah: PrayerTime | undefined = undefined;
@@ -65,24 +65,24 @@ export function updatePrayerTimesData(data: PrayerTimesData): PrayerTimesData {
   let highlight = undefined;
   if(data.config.showHighlight){
     switch (selectionIdx) {
-      case 0/*Fajr*/: if (left <= 35) highlight = { time: data.times[0].time, name: Text.FAJRPRAYER, nextTime: data.times[1].time, next: Text.SUN }; break;
+      case 0/*Fajr*/: if (left <= 35) highlight = { time: data.times[0].time, name: Text.CurrentPrayerTime.FAJR, nextTime: data.times[1].time, next: Text.PrayerTimes.SUN }; break;
       case 1/*    */: highlight = undefined; break;
       case 2/*Dhuhr*/:
         if (data.cuma == null) {
-          if (passed <= 20) highlight = { time: data.times[2].time, name: Text.DHUHRPRAYER, nextTime: data.times[3].time, next: Text.ASRPRAYER };
+          if (passed <= 20) highlight = { time: data.times[2].time, name: Text.CurrentPrayerTime.DHUHR, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
         } else {
           var dhuhr = moment(now.format("YYYY-MM-DD ") + data.times[2].time);
           var cuma = dhuhr.hours() === 13 ? moment(now.format("YYYY-MM-DD 14:30:00")) : moment(now.format("YYYY-MM-DD 12:30:00"));
           if (cuma.isBefore(dhuhr)) cuma = dhuhr;
           passed = (now.unix() - cuma.unix()) / 60;
           if (passed >= 0 && passed <= 60) {
-            highlight = { time: data.cuma!.time, name: Text.CUMA, nextTime: data.times[3].time, next: Text.ASRPRAYER };
+            highlight = { time: data.cuma!.time, name: Text.CurrentPrayerTime.CUMA, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
           }
         }
         break;
-      case 3/*Asr*/: if (passed <= 20) highlight = { time: data.times[3].time, name: Text.ASRPRAYER, nextTime: data.times[4].time, next: Text.MAGHRIB }; break;
-      case 4/*Maghrib*/: if (passed <= 20) highlight = { time: data.times[4].time, name: Text.MAGHRIBPRAYER, nextTime: data.times[5].time, next: Text.ISHAAPRAYER }; break;
-      case 5/*Ishaa*/: if (passed <= 20) highlight = { time: data.times[5].time, name: Text.ISHAAPRAYER, nextTime: data.times[0].time, next: Text.FAJRPRAYER }; break;
+      case 3/*Asr*/: if (passed <= 20) highlight = { time: data.times[3].time, name: Text.CurrentPrayerTime.ASR, nextTime: data.times[4].time, next: Text.CurrentPrayerTime.MAGHRIB }; break;
+      case 4/*Maghrib*/: if (passed <= 20) highlight = { time: data.times[4].time, name: Text.CurrentPrayerTime.MAGHRIB, nextTime: data.times[5].time, next: Text.CurrentPrayerTime.ISHAA }; break;
+      case 5/*Ishaa*/: if (passed <= 20) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA, nextTime: data.times[0].time, next: Text.CurrentPrayerTime.FAJR }; break;
     }
   }
 
@@ -180,15 +180,15 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
         hijri: Text.forHijriDate(hijri),
         holyDay: holyDay,
         times: [
-          { name: Text.FAJR, time: fajr },
-          { name: Text.SUN, time: sun },
-          { name: Text.DHUHR, time: dhuhr },
-          { name: Text.ASR, time: asr },
-          { name: Text.MAGHRIB, time: maghrib },
-          { name: Text.ISHAA, time: ishaa }
+          { name: Text.PrayerTimes.FAJR, time: fajr },
+          { name: Text.PrayerTimes.SUN, time: sun },
+          { name: Text.PrayerTimes.DHUHR, time: dhuhr },
+          { name: Text.PrayerTimes.ASR, time: asr },
+          { name: Text.PrayerTimes.MAGHRIB, time: maghrib },
+          { name: Text.PrayerTimes.ISHAA, time: ishaa }
         ],  	
-        sabah: config.sabah? { name: Text.SABAH, time: sabah } : undefined,
-        cuma: cuma ? { name: Text.CUMA, time: cuma } : undefined,
+        sabah: config.sabah? { name: Text.PrayerTimes.SABAH, time: sabah } : undefined,
+        cuma: cuma ? { name: Text.PrayerTimes.CUMA, time: cuma } : undefined,
         config: config
       } as PrayerTimesData)
 

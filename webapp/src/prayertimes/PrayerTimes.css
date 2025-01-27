@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+.parent {
+    @apply flex flex-col h-full text-center text-white justify-around py-[2rem];
+}
+
+.holyday {
+    @apply bg-sky-600 p-[1.5rem] text-white text-center font-medium col-span-2 -mx-[2rem] -mt-[2rem] text-[4rem] [line-height:1] flex justify-center items-center;
+}
+
+.date {
+    @apply flex items-center justify-center italic text-[6.5rem] [line-height:1.4] col-span-2 text-ellipsis overflow-hidden block;
+}
+
+.clock {
+    @apply flex items-center justify-center text-[22rem] [line-height:1] col-span-2;
+}
+
+.timeBox {
+    @apply w-full p-[1rem] h-max [&.selected]:!bg-white [&.selected]:text-black [&.selected]:font-medium;
+
+    .time {
+        @apply [line-height:1]
+    }
+
+    .name {
+        @apply [line-height:1];
+    }
+}
+
+.countdown {
+    @apply text-[12rem] [line-height:1] flex items-center justify-center col-span-2
+}
+
+.primary {
+    .timesGrid {
+        @apply grid landscape:grid-cols-3 portrait:grid-cols-2 px-[2rem] gap-[2rem];
+    }
+
+    .timeBox {
+        @apply flex flex-col-reverse bg-black/10;
+
+        .name {
+            @apply [font-size:6rem] py-[1rem];
+        }
+        .time {
+            @apply [font-size:10rem];
+        }
+    }
+}
+
+
+.secondary {
+    @media (orientation: landscape) {
+        /* same as primary */
+        .timesGrid {
+            @apply grid landscape:grid-cols-3 portrait:grid-cols-2 px-[2rem] gap-[2rem];
+        }
+    
+        .timeBox {
+            @apply flex flex-col-reverse bg-black/10;
+    
+            .name {
+                @apply [font-size:6rem] py-[1rem];
+            }
+            .time {
+                @apply [font-size:10rem];
+            }
+        }
+      }
+      
+      @media (orientation: portrait) {
+        .timesGrid {
+            @apply grid portrait:grid-cols-1 landscape:grid-cols-2 px-[2rem] gap-[2rem];
+        }
+    
+        .timeBox {
+            @apply grid grid-cols-2 py-[2rem] bg-white/10;
+       
+            .name {
+                @apply [font-size:8rem];
+            }        
+            .time {
+                @apply [font-size:8rem];
+            }
+        }
+      }
+
+
+
+}}
