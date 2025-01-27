@@ -23,14 +23,15 @@ export class PrayerTimesData {
   time: string = "00:00";
   selectionIdx: number = -1;
   highlight: { name: LocalizedText, time: string, next: LocalizedText, nextTime: string } | undefined = undefined;
+  kerahat : Boolean = false
   config: Config = {} as Config
 }
 
 
 
 function mymoment() {
-  if (window.location.hostname === "localhost"){
-    return moment(/*"2024-11-30 15:00:00"*/);
+  if (window.location.hostname === "localhost" && false){
+    return moment("2025-01-31 17:00:01");
   } 
     else return moment();
 }
@@ -68,15 +69,14 @@ export function updatePrayerTimesData(data: PrayerTimesData): PrayerTimesData {
       case 0/*Fajr*/: if (left <= 35) highlight = { time: data.times[0].time, name: Text.CurrentPrayerTime.FAJR, nextTime: data.times[1].time, next: Text.PrayerTimes.SUN }; break;
       case 1/*    */: highlight = undefined; break;
       case 2/*Dhuhr*/:
-        if (data.cuma == null) {
+        if (data.cuma == null && now.isoWeekday() !== 5) {
           if (passed <= 20) highlight = { time: data.times[2].time, name: Text.CurrentPrayerTime.DHUHR, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
         } else {
-          var dhuhr = moment(now.format("YYYY-MM-DD ") + data.times[2].time);
-          var cuma = dhuhr.hours() === 13 ? moment(now.format("YYYY-MM-DD 14:30:00")) : moment(now.format("YYYY-MM-DD 12:30:00"));
-          if (cuma.isBefore(dhuhr)) cuma = dhuhr;
-          passed = (now.unix() - cuma.unix()) / 60;
+          let cuma = data.cuma? data.cuma.time : data.times[2].time;
+          var dhuhr = moment(now.format("YYYY-MM-DD ") +cuma);
+          passed = (now.unix() - dhuhr.unix()) / 60;
           if (passed >= 0 && passed <= 60) {
-            highlight = { time: data.cuma!.time, name: Text.CurrentPrayerTime.CUMA, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
+            highlight = { time: cuma, name: Text.CurrentPrayerTime.CUMA, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
           }
         }
         break;
