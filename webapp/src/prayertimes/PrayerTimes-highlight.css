@@ -1,0 +1,48 @@
+.highlight {
+    @apply grid landscape:grid-cols-5 portrait:grid-cols-3 px-[2rem] gap-[2rem] gap-[2rem];
+}
+
+.highlight .timesContainer {
+    @apply contents;
+}
+
+.highlight>div:first-child {
+    @apply landscape:col-start-2 landscape:col-span-3 landscape:row-span-3;
+}
+
+.highlight .timesContainer>div:nth-child(1) {
+    @apply landscape:col-start-1 landscape:row-start-1;
+}
+
+.highlight .timesContainer>div:nth-child(2) {
+    @apply landscape:col-start-1 landscape:row-start-2;
+}
+
+.highlight .timesContainer>div:nth-child(3) {
+    @apply landscape:col-start-1 landscape:row-start-3;
+}
+
+.highlight .timesContainer>div:nth-child(4) {
+    @apply landscape:col-start-5 landscape:row-start-1;
+}
+
+.highlight .timesContainer>div:nth-child(5) {
+    @apply landscape:col-start-5 landscape:row-start-2;
+}
+
+.highlight .timesContainer>div:nth-child(6) {
+    @apply landscape:col-start-5 landscape:row-start-3;
+}
+
+.highlight .timeContainer {
+    @apply flex flex-col-reverse bg-black/10 data-[selected=true]:bg-white !py-[0rem];
+}
+
+.highlight .name {
+    @apply [font-size:3rem] py-[1rem];
+}
+
+
+.highlight .time {
+    @apply [font-size:5rem];
+}

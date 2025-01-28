@@ -14,25 +14,8 @@
     @apply flex items-center justify-center text-[22rem] landscape:text-[21rem] [line-height:1] col-span-2;
 }
 
-.primary .timesContainer {
-    @apply grid landscape:grid-cols-3 portrait:grid-cols-2 px-[2rem] gap-[2rem];
-}
-
-.secondary .timesContainer {
-    @apply grid portrait:grid-cols-1 landscape:grid-cols-2 px-[2rem] gap-[2rem];
-}
-
 .timeContainer {
     @apply w-full p-[1rem] h-max data-[selected=true]:text-black data-[selected=true]:font-medium;
-}
-
-.primary .timeContainer {
-    @apply flex flex-col-reverse bg-black/10 data-[selected=true]:bg-white;
-
-}
-
-.secondary .timeContainer {
-    @apply grid grid-cols-2 py-[2rem] bg-white/10 data-[selected=true]:bg-white;
 }
 
 .time {
@@ -42,24 +25,6 @@
 .name {
     @apply [line-height:1];
 }
-
-.primary .name {
-    @apply [font-size:6rem] py-[1rem];
-}
-
-.secondary .name {
-    @apply [font-size:8rem];
-}
-
-
-.primary .time {
-    @apply [font-size:10rem];
-}
-
-.secondary .time {
-    @apply [font-size:8rem];
-}
-
 
 .countdown {
     @apply text-[12rem] landscape:text-[11rem] [line-height:1] flex items-center justify-center col-span-2

@@ -7,14 +7,14 @@ import moment from 'moment'
 import { Config } from './config'
 
 export class PrayerTime {
-  name: LocalizedText = {de:"", tr:"", bs: ""}
+  name: LocalizedText = { de: "", tr: "", bs: "" }
   time: string = "00:00"
 }
 
 export class PrayerTimesData {
   city: string = ""
-  date: LocalizedText = {de:"", tr:"", bs: ""}
-  hijri: LocalizedText = {de:"", tr:"", bs: ""}
+  date: LocalizedText = { de: "", tr: "", bs: "" }
+  hijri: LocalizedText = { de: "", tr: "", bs: "" }
   holyDay: LocalizedText | undefined = undefined
   times: Array<PrayerTime> = []
   sabah: PrayerTime | undefined = undefined;
@@ -23,58 +23,59 @@ export class PrayerTimesData {
   time: string = "00:00";
   selectionIdx: number = -1;
   highlight: { name: LocalizedText, time: string, next: LocalizedText, nextTime: string } | undefined = undefined;
-  kerahat : Boolean = false
-  config: Config = {} as Config
+  kerahat: Boolean = false;
+  config: Config = {} as Config;
+  currentLanguage: number = 0;
 }
 
 
 
-function mymoment() {
-  if (window.location.hostname === "localhost" && false){
-    return moment("2025-01-31 17:00:01");
-  } 
-    else return moment();
+function now() {
+  if (window.location.hostname === "localhost" && false) {
+    return moment("2025-01-31 17:15:01");
+  }
+  else return moment();
 }
 
 export function updatePrayerTimesData(data: PrayerTimesData): PrayerTimesData {
-  let now = mymoment();
+  let date = now();
 
   if (data.selectionIdx < 0) data = { ...data, selectionIdx: data.selectionIdx + 6 };
 
-  let time = now.format("HH:mm:ss");
+  let time = date.format("HH:mm:ss");
 
   var selectionIdx = data.times.map(e => e.time + ":00").concat("23:59:59").findIndex((item) => time <= item) - 1
 
-  var next = moment(now.format("YYYY-MM-DD ") + data.times[(selectionIdx + 1) % 6].time, "YYYY-MM-DD HH:mm");
+  var next = moment(date.format("YYYY-MM-DD ") + data.times[(selectionIdx + 1) % 6].time, "YYYY-MM-DD HH:mm");
   next = next.startOf("minute");
-  if (next < now) {
+  if (next < date) {
     next = next.add(1, 'days');
   }
 
-  let diff = next.unix() - now.unix()
+  let diff = next.unix() - date.unix()
   let seconds = diff % 60
   let minutes = Math.floor(diff / 60) % 60
   let hours = Math.floor(diff / 60 / 60)
 
   let countdown = (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
 
-  var prev = selectionIdx < 0 ? now : moment(now.format("YYYY-MM-DD ") + data.times[(selectionIdx) % 6].time, "YYYY-MM-DD HH:mm");
+  var prev = selectionIdx < 0 ? date : moment(date.format("YYYY-MM-DD ") + data.times[(selectionIdx) % 6].time, "YYYY-MM-DD HH:mm");
 
-  let passed = (now.unix() - prev.unix()) / 60
-  let left = (next.unix() - now.unix()) / 60
+  let passed = (date.unix() - prev.unix()) / 60
+  let left = (next.unix() - date.unix()) / 60
 
   let highlight = undefined;
-  if(data.config.showHighlight){
+  if (data.config.showHighlight) {
     switch (selectionIdx) {
       case 0/*Fajr*/: if (left <= 35) highlight = { time: data.times[0].time, name: Text.CurrentPrayerTime.FAJR, nextTime: data.times[1].time, next: Text.PrayerTimes.SUN }; break;
       case 1/*    */: highlight = undefined; break;
       case 2/*Dhuhr*/:
-        if (data.cuma == null && now.isoWeekday() !== 5) {
+        if (data.cuma == null && date.isoWeekday() !== 5) {
           if (passed <= 20) highlight = { time: data.times[2].time, name: Text.CurrentPrayerTime.DHUHR, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
         } else {
-          let cuma = data.cuma? data.cuma.time : data.times[2].time;
-          var dhuhr = moment(now.format("YYYY-MM-DD ") +cuma);
-          passed = (now.unix() - dhuhr.unix()) / 60;
+          let cuma = data.cuma ? data.cuma.time : data.times[2].time;
+          var dhuhr = moment(date.format("YYYY-MM-DD ") + cuma);
+          passed = (date.unix() - dhuhr.unix()) / 60;
           if (passed >= 0 && passed <= 60) {
             highlight = { time: cuma, name: Text.CurrentPrayerTime.CUMA, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
           }
@@ -88,7 +89,7 @@ export function updatePrayerTimesData(data: PrayerTimesData): PrayerTimesData {
 
   data = { ...data, countdown: `${countdown}`, selectionIdx: selectionIdx, time: time, highlight: highlight };
 
-  if (Text.forMoment(now.startOf('day')).de !== data.date.de) {
+  if (Text.forMoment(date.startOf('day')).de !== data.date.de) {
     window.location.reload();
   }
   return data;
@@ -99,12 +100,12 @@ export function determineScreenStatus(data: PrayerTimesData): boolean {
   if (data.hijri.tr.includes("Ramazan")) return true;
   if (data.selectionIdx < 0) return false;
 
-  let now = mymoment();
-  var prev = moment(now.format("YYYY-MM-DD ") + data.times[(data.selectionIdx) % 6].time, "YYYY-MM-DD HH:mm");
-  var next = moment(now.format("YYYY-MM-DD ") + data.times[(data.selectionIdx + 1) % 6].time, "YYYY-MM-DD HH:mm");
+  let date = now();
+  var prev = moment(date.format("YYYY-MM-DD ") + data.times[(data.selectionIdx) % 6].time, "YYYY-MM-DD HH:mm");
+  var next = moment(date.format("YYYY-MM-DD ") + data.times[(data.selectionIdx + 1) % 6].time, "YYYY-MM-DD HH:mm");
 
-  let passed = now.unix() - prev.unix()
-  let left = next.unix() - now.unix()
+  let passed = date.unix() - prev.unix()
+  let left = next.unix() - date.unix()
   var hour = 60 * 60;
 
   switch (data.selectionIdx) {
@@ -129,11 +130,11 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
     .then(response => {
       return response.text()
     }).then(async data => {
-      let today = mymoment()
+      let today = now()
       var date = today.format("YYYY-MM-DD");
 
       let hijri = await toHijri(today);
-      let holyDay = config.showHolyDay? await getHolyDay(hijri) : null;
+      let holyDay = config.showHolyDay ? await getHolyDay(hijri) : null;
 
 
       var line = data.split("\n").find(line => line.startsWith(date))
@@ -186,8 +187,8 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
           { name: Text.PrayerTimes.ASR, time: asr },
           { name: Text.PrayerTimes.MAGHRIB, time: maghrib },
           { name: Text.PrayerTimes.ISHAA, time: ishaa }
-        ],  	
-        sabah: config.sabah? { name: Text.PrayerTimes.SABAH, time: sabah } : undefined,
+        ],
+        sabah: config.sabah ? { name: Text.PrayerTimes.SABAH, time: sabah } : undefined,
         cuma: cuma ? { name: Text.PrayerTimes.CUMA, time: cuma } : undefined,
         config: config
       } as PrayerTimesData)
