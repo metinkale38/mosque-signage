@@ -28,7 +28,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if(data.times.length>0)
+      if (data.times.length > 0)
         setData(updatePrayerTimesData(data))
       if (config.screenOnOff) {
         var screenState = determineScreenStatus(data)
@@ -55,13 +55,13 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
     <div className='h-full relative'>
       <div className={'absolute left-0 top-0 right-0 bottom-0 ' + config.bgColor + ' preventBurnInHue'}></div>
       <div className={'absolute left-0 top-0 right-0 bottom-0 flex flex-col ' + config.style}>
-      {
+        {
           data.holyDay != null ?
             (<p className={"holyday"}>
               {render(data.holyDay!!)}
             </p>) : <></>
         }
-        <div className={"parent grow "+ (notTransparent ? ' preventBurnInMove' : '')}>
+        <div className={"parent grow " + (notTransparent ? ' preventBurnInMove' : '')}>
           <p className='date'>{render(data.date)}</p>
           <p className='clock'>{data.time}</p>
           <p className='date'>{render(data.hijri)}</p>
@@ -96,7 +96,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
                   })
                 }</div>)
               :
-              (<><div className='timesGrid'>
+              (<><div className='timesContainer'>
                 {
                   data.times.map((element, idx) => {
 
@@ -110,7 +110,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
                     }
 
                     return (
-                      <div key={element.name.de.toLocaleLowerCase()} className={"timeBox " + (data.selectionIdx === idx ? "selected" : "")}>
+                      <div key={element.name.de.toLocaleLowerCase()} className="timeContainer" data-selected={data.selectionIdx === idx}>
                         <div className='name'>{render(element.name)}</div>
                         <div className='time'>{element.time}</div>
                       </div>
