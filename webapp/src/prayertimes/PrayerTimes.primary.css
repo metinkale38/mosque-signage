@@ -1,18 +1,18 @@
-.timesContainer {
+.primary .timesContainer {
     @apply grid landscape:grid-cols-3 portrait:grid-cols-2 px-[2rem] gap-[2rem];
 }
 
 
-.timeContainer {
+.primary .timeContainer {
     @apply flex flex-col-reverse bg-black/10 data-[selected=true]:bg-white;
 
 }
 
-.name {
+.primary .name {
     @apply [font-size:6rem] py-[1rem];
 }
 
 
-.time {
+.primary .time {
     @apply [font-size:10rem];
 }

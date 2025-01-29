@@ -4,13 +4,11 @@ import { Default } from './config';
 import { ScreenControl } from './ScreenControl';
 import { LocalizedText } from '../LocalizedText';
 import "./PrayerTimes.css"
-import "./PrayerTimes-highlight.css"
+import "./PrayerTimes.primary.css"
+import "./PrayerTimes.secondary.css"
+import "./PrayerTimes.highlight.css"
 
 const PrayerTimes = ({ config = Default }) => {
-  if (config.style === "primary") require("./PrayerTimes.primary.css")
-  else require("./PrayerTimes.secondary.css")
-
-
   let [data, setData] = useState<PrayerTimesData>(new PrayerTimesData())
 
   let [lang, setLang] = useState(0);
@@ -55,7 +53,7 @@ const PrayerTimes = ({ config = Default }) => {
   }
 
   return (
-    <div className='h-full relative'>
+    <div className={'h-full relative '+(config.style === "primary" ? "primary" : "secondary")}>
       <div className={'absolute left-0 top-0 right-0 bottom-0 ' + config.bgColor + ' preventBurnInHue'}></div>
       <div className={'absolute left-0 top-0 right-0 bottom-0 flex flex-col'}>
         {
