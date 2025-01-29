@@ -76,7 +76,15 @@ class MainActivity : ComponentActivity() {
                 startActivity(Intent(android.provider.Settings.ACTION_SETTINGS))
             },
             (if (App.enabled) "Disable" else "Enable") to {
-                App.enabled = !App.enabled
+                if (App.enabled) {
+                    App.enabled = false
+                    finish()
+                } else {
+                    App.enabled = true
+                    App.active = true
+                    recreate()
+                    OverlayService.start(this@MainActivity)
+                }
             }
 
         )

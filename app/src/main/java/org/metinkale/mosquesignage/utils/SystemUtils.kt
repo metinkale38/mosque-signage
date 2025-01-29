@@ -4,6 +4,7 @@ import android.util.Log
 import android.webkit.JavascriptInterface
 import kotlinx.coroutines.runBlocking
 import org.metinkale.mosquesignage.App
+import org.metinkale.mosquesignage.OverlayService
 import org.metinkale.mosquesignage.shell.RootShell
 import org.metinkale.mosquesignage.shell.Shell
 
@@ -16,7 +17,7 @@ object SystemUtils {
         Log.e("System", "On")
         if (RootShell.supported) {
             runBlocking { RootShell.exec("mt8127_hdmi init 1") } // Fire TV with LineageOS
-        }else if(Shell.supported){
+        } else if (Shell.supported) {
             runBlocking { Shell.exec("input keyevent 26") } // Android TV (without Stick)
         }
     }
@@ -26,7 +27,7 @@ object SystemUtils {
         Log.e("System", "Off")
         if (RootShell.supported) {
             runBlocking { RootShell.exec("mt8127_hdmi init 0") } // Fire TV with LineageOS
-        }else if(Shell.supported){
+        } else if (Shell.supported) {
             runBlocking { Shell.exec("input keyevent 26") } // Android TV (without Stick)
         }
     }
@@ -43,7 +44,7 @@ object SystemUtils {
     }
 
     suspend fun startActivity() {
-        Shell.exec("am start -n ${App.packageName}/.MainActivity")
+        Shell.exec("am start -n org.metinkale.mosquesignage/.MainActivity")
     }
 
 }

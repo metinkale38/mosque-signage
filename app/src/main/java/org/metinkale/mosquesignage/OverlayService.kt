@@ -43,6 +43,7 @@ class OverlayService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.e("OverlayService", "onCreate")
         App.enabled = true
 
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager

@@ -8,15 +8,23 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.metinkale.mosquesignage.shell.Shell
+import org.metinkale.mosquesignage.utils.SystemUtils
 
 class StartOverlayReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         Log.e("StartOverlayReceiver", "onReceive")
-        if(App.enabled) {
+        if (App.enabled) {
             if (isInternetAvailable(context)) {
                 if (!OverlayService.running) {
                     App.active = true
-                    OverlayService.restart(context)
+                    if (Shell.supported) {
+                        GlobalScope.launch { SystemUtils.startActivity() }
+                    } else {
+                        OverlayService.start(App.ctx)
+                    }
                 } else Log.e("StartOverlayReceiver", "already running")
             } else Log.e("StartOverlayReceiver", "no internet")
         } else Log.e("StartOverlayReceiver", "disabled")

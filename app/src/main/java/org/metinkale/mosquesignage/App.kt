@@ -1,5 +1,6 @@
 package org.metinkale.mosquesignage
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.SharedPreferences
 import java.util.UUID
@@ -16,23 +17,23 @@ class App : Application() {
         lateinit var ctx: App
             private set
 
-        val packageName get() = ctx.packageName
-
         val prefs: SharedPreferences by lazy {
             ctx.getSharedPreferences("prefs", MODE_PRIVATE)
         }
 
         var config: String
             get() = prefs.getString("config", "")!!
+            @SuppressLint("ApplySharedPref")
             set(value) {
-                prefs.edit().putString("config", value).apply()
+                prefs.edit().putString("config", value).commit()
             }
         var active: Boolean = true
 
         var enabled: Boolean
             get() = prefs.getBoolean("enabled", true)
+            @SuppressLint("ApplySharedPref")
             set(value) {
-                prefs.edit().putBoolean("enabled", value).apply()
+                prefs.edit().putBoolean("enabled", value).commit()
             }
 
 
