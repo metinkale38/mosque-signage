@@ -1,80 +1,68 @@
 export interface Config {
-    city: string;
-    screenOnOff: boolean,
-    cumaSummer: string | undefined;
-    cumaWinter: string | undefined;
-    sabah: number | undefined
-    showHighlight: boolean,
-    showHolyDay: boolean,
-    bgColor: string,
-    style: string,
-    languages: string[]
+   key: string
+   city: string
+   screenOnOff: boolean
+   cumaSummer: string | undefined
+   cumaWinter: string | undefined
+   sabah: number | undefined
+   showHighlight: boolean
+   showHolyDay: boolean
+   bgColor: string
+   style: string
+   languages: string[]
 }
 
-const Empty : Config =  {
-    city: "Braunschweig" ,
-    screenOnOff: false,
-    cumaSummer: undefined,
-    cumaWinter: undefined,
-    sabah: undefined,
-    showHighlight: true,
-    showHolyDay: true,
-    bgColor: "bg-slate-700",
-    style: "primary",
-    languages: ["de" , "tr"]
- };
-
- export const Braunschweig: Config = {
-   ...Empty,
-   city: "Braunschweig" ,
-   screenOnOff: true,
-   cumaSummer: "14:30",
-   cumaWinter: "12:30",
+export const Default: Config = {
+   key: '',
+   city: "Braunschweig",
+   screenOnOff: false,
+   cumaSummer: undefined,
+   cumaWinter: undefined,
+   sabah: undefined,
    showHighlight: true,
    showHolyDay: true,
    bgColor: "bg-sky-700",
-   sabah: -30
+   style: "primary",
+   languages: ["de", "tr"]
 };
 
 
 
-export const DITIBBraunschweig: Config = {
-   ...Empty,
-   city: "Braunschweig" ,
-   showHighlight: true,
-   showHolyDay: true,
-   bgColor: "bg-amber-700",
-   style: "secondary"
-};
-
-
-export const IGBDBraunschweig: Config = {
-   ...Empty,
-   city: "Braunschweig" ,
-   showHighlight: true,
-   showHolyDay: true,
-   bgColor: "bg-[#445952]",
-   style: "secondary",
-   languages: ["de", "bs"]
-};
-
-
- export const Neustadt: Config = {
-    ...Empty,
-    city: "Neustadt",    
-    bgColor: "bg-sky-700",
-    showHolyDay: true,
-    showHighlight: true
- };
-
-
- export const Goslar: Config = {
-    ...Empty,
-    city: "Goslar",    
-    bgColor: "bg-green-700",
-    showHolyDay: true,
-    showHighlight: true
- };
-
-export const Default: Config = {...Braunschweig, screenOnOff: false}
+export const configs: Config[] = [
+   {
+      ...Default,
+      key: "braunschweig",
+      screenOnOff: true,
+      cumaSummer: "14:30",
+      cumaWinter: "12:30",
+      sabah: -30
+   },
+   {
+      ...Default,
+      key: "ditibbs",
+      city: "Braunschweig",
+      bgColor: "bg-[#00366b]",
+      style: "secondary"
+   },
+   {
+      ...Default,
+      key: "igbdbs",
+      city: "Braunschweig",
+      bgColor: "bg-[#445952]",
+      style: "secondary",
+      languages: ["de", "bs"]
+   },
+   {
+      ...Default,
+      key: "neustadt",
+      city: "Neustadt",
+      bgColor: "bg-sky-700"
+   },
+   {
+      ...Default,
+      key: "goslar",
+      city: "Goslar",
+      bgColor: "bg-green-700"
+   }
+];
 

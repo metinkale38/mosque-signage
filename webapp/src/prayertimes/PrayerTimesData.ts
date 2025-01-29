@@ -24,20 +24,18 @@ export class PrayerTimesData {
   selectionIdx: number = -1;
   highlight: { name: LocalizedText, time: string, next: LocalizedText, nextTime: string } | undefined = undefined;
   kerahat: Boolean = false;
-  config: Config = {} as Config;
   currentLanguage: number = 0;
 }
 
 
-
+let mocktime = new URLSearchParams(window.location.search).get("mocktime")
 function now() {
-  if (window.location.hostname === "localhost" && false) {
-    return moment("2025-01-31 17:15:01");
-  }
-  else return moment();
+  if (mocktime) {
+    return moment(mocktime);
+  } else return moment();
 }
 
-export function updatePrayerTimesData(data: PrayerTimesData): PrayerTimesData {
+export function updatePrayerTimesData(data: PrayerTimesData, config: Config): PrayerTimesData {
   let date = now();
 
   if (data.selectionIdx < 0) data = { ...data, selectionIdx: data.selectionIdx + 6 };
@@ -65,7 +63,7 @@ export function updatePrayerTimesData(data: PrayerTimesData): PrayerTimesData {
   let left = (next.unix() - date.unix()) / 60
 
   let highlight = undefined;
-  if (data.config.showHighlight) {
+  if (config.showHighlight) {
     switch (selectionIdx) {
       case 0/*Fajr*/: if (left <= 35) highlight = { time: data.times[0].time, name: Text.CurrentPrayerTime.FAJR, nextTime: data.times[1].time, next: Text.PrayerTimes.SUN }; break;
       case 1/*    */: highlight = undefined; break;
@@ -189,9 +187,8 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
           { name: Text.PrayerTimes.ISHAA, time: ishaa }
         ],
         sabah: config.sabah ? { name: Text.PrayerTimes.SABAH, time: sabah } : undefined,
-        cuma: cuma ? { name: Text.PrayerTimes.CUMA, time: cuma } : undefined,
-        config: config
-      } as PrayerTimesData)
+        cuma: cuma ? { name: Text.PrayerTimes.CUMA, time: cuma } : undefined
+      } as PrayerTimesData, config)
 
     })
 

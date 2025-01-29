@@ -6,8 +6,8 @@ import { LocalizedText } from '../LocalizedText';
 import "./PrayerTimes.css"
 import "./PrayerTimes-highlight.css"
 
-const PrayerTimes = ({ transparent = false, config = Default }) => {
-  if (config.style == "primary") require("./PrayerTimes.primary.css")
+const PrayerTimes = ({ config = Default }) => {
+  if (config.style === "primary") require("./PrayerTimes.primary.css")
   else require("./PrayerTimes.secondary.css")
 
 
@@ -34,7 +34,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (data.times.length > 0)
-        setData(updatePrayerTimesData(data))
+        setData(updatePrayerTimesData(data, config))
       if (config.screenOnOff) {
         var screenState = determineScreenStatus(data)
         if (screenState !== screenOn) {
@@ -48,15 +48,11 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
       }
     }, 1000 - new Date().getTime() % 1000);
     return () => clearTimeout(timeout);
-  }, [data, screenOn, config.screenOnOff]);
+  }, [data, screenOn, config]);
 
   function localize(text: LocalizedText): string {
     return (text as any)[config.languages[lang]]
   }
-
-  let notTransparent = !transparent;
-
-
 
   return (
     <div className='h-full relative'>
@@ -68,7 +64,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
               {localize(data.holyDay!!)}
             </p>) : <></>
         }
-        <div className={"parent grow " + (notTransparent ? ' preventBurnInMove' : '')}>
+        <div className={"parent grow preventBurnInMove"}>
           <p className='date'>{localize(data.date)}</p>
           <p className='clock'>{data.time}</p>
           <p className='date'>{localize(data.hijri)}</p>
@@ -113,7 +109,7 @@ const PrayerTimes = ({ transparent = false, config = Default }) => {
           <p className='countdown'>{data.countdown}</p>
         </div>
       </div>
-    </div>
+    </div >
 
   )
 }

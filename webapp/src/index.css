@@ -3,13 +3,13 @@
 @import "tailwindcss/utilities";
 
 @media (orientation: landscape) {
-  html{
+  html {
     font-size: 1vmin;
   }
 }
 
 @media (orientation: portrait) {
-  html{
+  html {
     font-size: 1.1vmin;
   }
 }
@@ -33,8 +33,10 @@ body {
 
 /* For IE, Edge and Firefox */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 
@@ -44,18 +46,38 @@ body {
 }
 
 @keyframes move {
-    from {  transform: rotate(0deg) translateX(5px) rotate(0deg); }
-    to   {  transform: rotate(360deg) translateX(5px) rotate(-360deg); }
+  from {
+    transform: rotate(0deg) translateX(5px) rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg) translateX(5px) rotate(-360deg);
+  }
 }
 
 .preventBurnInHue {
-  animation: hueRotate 250s forwards infinite;
+  animation: hueRotate 20s forwards infinite;
   animation-timing-function: linear;
 }
+
 @keyframes hueRotate {
-    0% {  filter: hue-rotate(20deg) grayscale(0); }
-    25%   {  filter: hue-rotate(-20deg) grayscale(0); }
-    50% {  filter: hue-rotate(20deg) grayscale(0.5); }
-    75%   {  filter: hue-rotate(-20deg) grayscale(0); }
-    100% {  filter: hue-rotate(20deg) grayscale(0); }
+  0% {
+    filter: hue-rotate(20deg) grayscale(0);
+  }
+
+  25% {
+    filter: hue-rotate(-20deg) grayscale(0);
+  }
+
+  50% {
+    filter: hue-rotate(20deg) grayscale(0.5);
+  }
+
+  75% {
+    filter: hue-rotate(-20deg) grayscale(0);
+  }
+
+  100% {
+    filter: hue-rotate(20deg) grayscale(0);
+  }
 }
