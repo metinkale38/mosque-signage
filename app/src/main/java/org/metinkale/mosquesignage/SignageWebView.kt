@@ -66,6 +66,6 @@ fun Context.SignageWebView(): View =
             settings.javaScriptEnabled = true
 
             addJavascriptInterface(SystemUtils, "screenControl")
-            loadUrl("http://localhost:8080/?${App.query}")
+            loadUrl("http://localhost:8080/?config=${App.query}")
         })
     }

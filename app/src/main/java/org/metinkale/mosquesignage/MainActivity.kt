@@ -3,15 +3,11 @@ package org.metinkale.mosquesignage
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import android.graphics.Color
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,7 +26,7 @@ class MainActivity : ComponentActivity() {
         if (App.config.isEmpty()) {
             askConfigDialog()
         } else {
-            OverlayService.start(this)
+            if (App.enabled) OverlayService.start(this)
             setContentView(ListView(this).init())
         }
     }
@@ -47,7 +43,7 @@ class MainActivity : ComponentActivity() {
 
         val options: Array<Pair<String, () -> Unit>> = arrayOf(
             "Start" to {
-                App.enabled = true
+                App.active = true
                 OverlayService.restart(this@MainActivity)
                 recreate()
             },
@@ -78,6 +74,9 @@ class MainActivity : ComponentActivity() {
             },
             "Settings" to {
                 startActivity(Intent(android.provider.Settings.ACTION_SETTINGS))
+            },
+            (if (App.enabled) "Disable" else "Enable") to {
+                App.enabled = !App.enabled
             }
 
         )

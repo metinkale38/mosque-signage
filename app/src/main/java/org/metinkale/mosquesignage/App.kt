@@ -27,7 +27,13 @@ class App : Application() {
             set(value) {
                 prefs.edit().putString("config", value).apply()
             }
-        var enabled: Boolean = true
+        var active: Boolean = true
+
+        var enabled: Boolean
+            get() = prefs.getBoolean("enabled", true)
+            set(value) {
+                prefs.edit().putBoolean("enabled", value).apply()
+            }
 
 
         val installationId

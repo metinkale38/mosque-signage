@@ -21,7 +21,6 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.metinkale.mosquesignage.utils.SystemUtils
@@ -42,23 +41,25 @@ class OverlayService : Service() {
     private var wakeLock: PowerManager.WakeLock? = null
 
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        App.enabled = true
 
-            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            val channel = NotificationChannel("channel", "channel", NotificationManager.IMPORTANCE_HIGH)
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel =
+                NotificationChannel("channel", "channel", NotificationManager.IMPORTANCE_HIGH)
             manager.createNotificationChannel(channel)
-            startForeground(
-                1,
-                NotificationCompat.Builder(this, "channel")
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
-                    .setContentTitle("MosqueSignage")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
-            )
         }
-        if (App.config.isEmpty() || !App.enabled ||
+        startForeground(
+            1,
+            NotificationCompat.Builder(this, "channel")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("MosqueSignage")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
+        )
+
+        if (App.config.isEmpty() || !App.active ||
             (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this))
         ) {
             stopSelf()
@@ -109,7 +110,7 @@ class OverlayService : Service() {
             ): Boolean {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     stopSelf()
-                    App.enabled = false
+                    App.active = false
 
                     startActivity(Intent(this@OverlayService, MainActivity::class.java).also {
                         it.flags = FLAG_ACTIVITY_NEW_TASK

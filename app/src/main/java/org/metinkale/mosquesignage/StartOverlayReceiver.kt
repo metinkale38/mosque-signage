@@ -12,12 +12,14 @@ import android.util.Log
 class StartOverlayReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         Log.e("StartOverlayReceiver", "onReceive")
-        if (isInternetAvailable(context)) {
-            if (!OverlayService.running) {
-                App.enabled = true
-                OverlayService.restart(context)
-            } else Log.e("StartOverlayReceiver", "already running")
-        } else Log.e("StartOverlayReceiver", "no internet")
+        if(App.enabled) {
+            if (isInternetAvailable(context)) {
+                if (!OverlayService.running) {
+                    App.active = true
+                    OverlayService.restart(context)
+                } else Log.e("StartOverlayReceiver", "already running")
+            } else Log.e("StartOverlayReceiver", "no internet")
+        } else Log.e("StartOverlayReceiver", "disabled")
     }
 
     fun isInternetAvailable(context: Context): Boolean {
