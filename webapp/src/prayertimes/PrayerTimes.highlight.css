@@ -2,6 +2,28 @@
     @apply grid landscape:grid-cols-5 portrait:grid-cols-3 px-[2rem] gap-[2rem] gap-[2rem];
 }
 
+.primary .highlight .timeContainer {
+    @apply bg-black/10;
+}
+
+
+.primary .highlight .box {
+    @apply bg-black/10;
+}
+
+.secondary .highlight .box {
+    @apply bg-white/10;
+}
+
+.secondary .highlight .timeContainer {
+    @apply bg-white/10;
+}
+
+
+.highlight .box {
+    @apply flex flex-col gap-[1rem] bg-black/10 pb-[2rem] col-span-3;
+}
+
 .highlight .timesContainer {
     @apply contents;
 }
@@ -11,15 +33,15 @@
 }
 
 .highlight .timesContainer>div:nth-child(1) {
-    @apply landscape:col-start-1 landscape:row-start-1;
+    @apply landscape:col-start-1 landscape:row-start-1 portrait:row-start-1;
 }
 
 .highlight .timesContainer>div:nth-child(2) {
-    @apply landscape:col-start-1 landscape:row-start-2;
+    @apply landscape:col-start-1 landscape:row-start-2 portrait:row-start-1;
 }
 
 .highlight .timesContainer>div:nth-child(3) {
-    @apply landscape:col-start-1 landscape:row-start-3;
+    @apply landscape:col-start-1 landscape:row-start-3 portrait:row-start-1;
 }
 
 .highlight .timesContainer>div:nth-child(4) {
@@ -35,7 +57,7 @@
 }
 
 .highlight .timeContainer {
-    @apply flex flex-col-reverse bg-black/10 data-[selected=true]:bg-white !py-[0rem];
+    @apply flex flex-col-reverse data-[selected=true]:bg-white !py-[0rem] pt-3;
 }
 
 .highlight .name {

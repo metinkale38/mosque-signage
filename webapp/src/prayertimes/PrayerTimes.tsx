@@ -70,7 +70,7 @@ const PrayerTimes = ({ config = Default }) => {
           {
             data.highlight ?
               (<div className='highlight'>
-                <div className={"flex flex-col gap-[1rem] bg-black/10 pb-[2rem] col-span-3"}>
+                <div className={"box"}>
                   <div className='flex justify-center text-center [font-size:8rem]'>{localize(data.highlight.name)}</div>
                   <div className='flex justify-center text-center'><img alt="silent" className='w-[21rem]' src='silent.svg' /></div>
                 </div>

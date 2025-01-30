@@ -22,7 +22,7 @@ export class PrayerTimesData {
   countdown: string = "00:00";
   time: string = "00:00";
   selectionIdx: number = -1;
-  highlight: { name: LocalizedText, time: string, next: LocalizedText, nextTime: string } | undefined = undefined;
+  highlight: { name: LocalizedText, time: string } | undefined = undefined;
   kerahat: Boolean = false;
   currentLanguage: number = 0;
 }
@@ -65,40 +65,40 @@ export function updatePrayerTimesData(data: PrayerTimesData, config: Config): Pr
   let highlight = undefined;
   if (config.showHighlightAlways) {
     switch (selectionIdx) {
-      case 0/*Fajr*/: highlight = { time: data.times[0].time, name: Text.CurrentPrayerTime.FAJR, nextTime: data.times[1].time, next: Text.PrayerTimes.SUN }; break;
-      case 1/*    */: highlight = { time: data.times[1].time, name: { de: "", tr: "", bs: "" }, nextTime: data.times[1].time, next: Text.PrayerTimes.SUN }; break;
+      case 0/*Fajr*/: highlight = { time: data.times[0].time, name: Text.CurrentPrayerTime.FAJR }; break;
+      case 1/*    */: highlight = { time: data.times[1].time, name: { de: "", tr: "", bs: "" } }; break;
       case 2/*Dhuhr*/:
         if (date.isoWeekday() !== 5) {
-          highlight = { time: data.times[2].time, name: Text.CurrentPrayerTime.DHUHR, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
+          highlight = { time: data.times[2].time, name: Text.CurrentPrayerTime.DHUHR };
         } else {
           let cuma = data.cuma ? data.cuma.time : data.times[2].time;
-          highlight = { time: cuma, name: Text.CurrentPrayerTime.CUMA, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
+          highlight = { time: cuma, name: Text.CurrentPrayerTime.CUMA };
         }
         break;
-      case 3/*Asr*/: highlight = { time: data.times[3].time, name: Text.CurrentPrayerTime.ASR, nextTime: data.times[4].time, next: Text.CurrentPrayerTime.MAGHRIB }; break;
-      case 4/*Maghrib*/: highlight = { time: data.times[4].time, name: Text.CurrentPrayerTime.MAGHRIB, nextTime: data.times[5].time, next: Text.CurrentPrayerTime.ISHAA }; break;
-      case 5/*Ishaa*/: highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA, nextTime: data.times[0].time, next: Text.CurrentPrayerTime.FAJR }; break;
+      case 3/*Asr*/: highlight = { time: data.times[3].time, name: Text.CurrentPrayerTime.ASR }; break;
+      case 4/*Maghrib*/: highlight = { time: data.times[4].time, name: Text.CurrentPrayerTime.MAGHRIB }; break;
+      case 5/*Ishaa*/: highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA }; break;
     }
   } else {
     if (config.showHighlight) {
       switch (selectionIdx) {
-        case 0/*Fajr*/: if (left <= 35) highlight = { time: data.times[0].time, name: Text.CurrentPrayerTime.FAJR, nextTime: data.times[1].time, next: Text.PrayerTimes.SUN }; break;
+        case 0/*Fajr*/: if (left <= 35) highlight = { time: data.times[0].time, name: Text.CurrentPrayerTime.FAJR }; break;
         case 1/*    */: highlight = undefined; break;
         case 2/*Dhuhr*/:
           if (data.cuma == null && date.isoWeekday() !== 5) {
-            if (passed <= 20) highlight = { time: data.times[2].time, name: Text.CurrentPrayerTime.DHUHR, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
+            if (passed <= 20) highlight = { time: data.times[2].time, name: Text.CurrentPrayerTime.DHUHR };
           } else {
             let cuma = data.cuma ? data.cuma.time : data.times[2].time;
             var dhuhr = moment(date.format("YYYY-MM-DD ") + cuma);
             passed = (date.unix() - dhuhr.unix()) / 60;
             if (passed >= 0 && passed <= 60) {
-              highlight = { time: cuma, name: Text.CurrentPrayerTime.CUMA, nextTime: data.times[3].time, next: Text.CurrentPrayerTime.ASR };
+              highlight = { time: cuma, name: Text.CurrentPrayerTime.CUMA };
             }
           }
           break;
-        case 3/*Asr*/: if (passed <= 20) highlight = { time: data.times[3].time, name: Text.CurrentPrayerTime.ASR, nextTime: data.times[4].time, next: Text.CurrentPrayerTime.MAGHRIB }; break;
-        case 4/*Maghrib*/: if (passed <= 20) highlight = { time: data.times[4].time, name: Text.CurrentPrayerTime.MAGHRIB, nextTime: data.times[5].time, next: Text.CurrentPrayerTime.ISHAA }; break;
-        case 5/*Ishaa*/: if (passed <= 20) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA, nextTime: data.times[0].time, next: Text.CurrentPrayerTime.FAJR }; break;
+        case 3/*Asr*/: if (passed <= 20) highlight = { time: data.times[3].time, name: Text.CurrentPrayerTime.ASR }; break;
+        case 4/*Maghrib*/: if (passed <= 20) highlight = { time: data.times[4].time, name: Text.CurrentPrayerTime.MAGHRIB }; break;
+        case 5/*Ishaa*/: if (passed <= 20) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA }; break;
       }
     }
   }
