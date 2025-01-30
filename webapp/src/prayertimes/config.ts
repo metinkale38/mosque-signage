@@ -6,6 +6,7 @@ export interface Config {
    cumaWinter: string | undefined
    sabah: number | undefined
    showHighlight: boolean
+   showHighlightAlways: boolean
    showHolyDay: boolean
    bgColor: string
    style: string
@@ -20,6 +21,7 @@ export const Default: Config = {
    cumaWinter: undefined,
    sabah: undefined,
    showHighlight: true,
+   showHighlightAlways: false,
    showHolyDay: true,
    bgColor: "bg-sky-700",
    style: "primary",
@@ -42,7 +44,8 @@ export const configs: Config[] = [
       key: "ditibbs",
       city: "Braunschweig",
       bgColor: "bg-[#00366b]",
-      style: "secondary"
+      style: "secondary",
+      showHighlightAlways: true
    },
    {
       ...Default,

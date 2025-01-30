@@ -53,7 +53,7 @@ const PrayerTimes = ({ config = Default }) => {
   }
 
   return (
-    <div className={'h-full relative '+(config.style === "primary" ? "primary" : "secondary")}>
+    <div className={'h-full relative ' + (config.style === "primary" ? "primary" : "secondary")}>
       <div className={'absolute left-0 top-0 right-0 bottom-0 ' + config.bgColor + ' preventBurnInHue'}></div>
       <div className={'absolute left-0 top-0 right-0 bottom-0 flex flex-col'}>
         {
