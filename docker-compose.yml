@@ -1,0 +1,28 @@
+# NOTE: This prayer time table is already deployed under https://metinkale38.github.io/mosque-signage/
+#       This is only needed for the Dashboard with dynamic content
+
+services:
+  mosque-signage:
+    container_name: mosque-signage
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ${VIDEO_PATH}:/var/www/html/videos
+      - ${PHOTO_PATH}:/var/www/html/images
+    expose:
+      - "80"
+    restart: always
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.signage.rule=Host(`${HOST}`)"
+      - "traefik.http.routers.signage.entrypoints=websecure"
+      - "traefik.http.routers.signage.tls.certresolver=myresolver"
+      - "traefik.http.services.signage.loadbalancer.server.port=80"
+
+networks:
+  traefik:
+    name: traefik
+    external: true

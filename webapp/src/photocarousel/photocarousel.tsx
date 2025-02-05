@@ -30,7 +30,7 @@ function PhotoCarousel() {
     }, [scrollContainer]);
 
 
-    return (<div ref={scrollContainer} className="w-full h-full flex bg-slate-700 overflow-auto scrollbar-hide will-change-scroll" >
+    return (<div ref={scrollContainer} className="w-full h-full flex overflow-auto scrollbar-hide will-change-scroll" >
         {
             [...images, ...images, ...images].map((img, idx) => (
                 <img alt="" key={"idx" + idx} src={img} className="max-h-[100%] my-6 mr-6 shadow border border-black rounded-xl " />

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import PrayerTimes from './prayertimes/PrayerTimes';
 import { configs, Default } from './prayertimes/config';
+import Dashboard from './dashboard/Dashboard';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -29,6 +30,7 @@ function rotate(rotate: "rotate-90" | "-rotate-90" | "rotate-180", params: URLSe
 
 function Router() {
   var params = new URLSearchParams(window.location.search)
+
   switch (params.get("rotate")) {
     case "90": return rotate("rotate-90", params)
     case "270": return rotate("-rotate-90", params)
@@ -48,7 +50,11 @@ function Router() {
     (selectedConfig as any)[key] = value;
   })
 
-  return (<PrayerTimes config={selectedConfig} />)
+  if (params.get("page") === "dashboard") {
+    return (<Dashboard />)
+  } else {
+    return (<PrayerTimes config={selectedConfig} />)
+  }
 }
 
 

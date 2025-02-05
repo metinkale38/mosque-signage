@@ -54,7 +54,7 @@ const PrayerTimes = ({ config = Default }) => {
 
   return (
     <div className={'h-full relative ' + (config.style === "primary" ? "primary" : "secondary")}>
-      <div className={'absolute left-0 top-0 right-0 bottom-0 ' + config.bgColor + ' preventBurnInHue'}></div>
+      <div className={'absolute left-0 top-0 right-0 bottom-0 preventBurnInHue'} style={{ backgroundColor: config.bgColor }}></div>
       <div className={'absolute left-0 top-0 right-0 bottom-0 flex flex-col'}>
         {
           data.holyDay != null ?
@@ -62,7 +62,7 @@ const PrayerTimes = ({ config = Default }) => {
               {localize(data.holyDay!!)}
             </p>) : <></>
         }
-        <div className={"parent grow preventBurnInMove"}>
+        <div className={"parent grow" + (window.self !== window.top ? "" : " preventBurnInMove")}>
           <p className='date'>{localize(data.date)}</p>
           <p className='clock'>{data.time}</p>
           <p className='date'>{localize(data.hijri)}</p>

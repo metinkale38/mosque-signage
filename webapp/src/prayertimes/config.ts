@@ -23,7 +23,7 @@ export const Default: Config = {
    showHighlight: true,
    showHighlightAlways: false,
    showHolyDay: true,
-   bgColor: "bg-sky-700",
+   bgColor: "#0069a8",
    style: "primary",
    languages: ["de", "tr"]
 };
@@ -43,7 +43,7 @@ export const configs: Config[] = [
       ...Default,
       key: "ditibbs",
       city: "Braunschweig",
-      bgColor: "bg-[#00366b]",
+      bgColor: "#00366b",
       style: "secondary",
       showHighlightAlways: true
    },
@@ -51,7 +51,7 @@ export const configs: Config[] = [
       ...Default,
       key: "igbdbs",
       city: "Braunschweig",
-      bgColor: "bg-[#445952]",
+      bgColor: "#445952",
       style: "secondary",
       languages: ["de", "bs"]
    },
@@ -59,13 +59,13 @@ export const configs: Config[] = [
       ...Default,
       key: "neustadt",
       city: "Neustadt",
-      bgColor: "bg-sky-700"
+      bgColor: "#0069a8"
    },
    {
       ...Default,
       key: "goslar",
       city: "Goslar",
-      bgColor: "bg-green-700"
+      bgColor: "#008236"
    }
 ];
 

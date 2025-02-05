@@ -64,6 +64,7 @@ fun Context.SignageWebView(): View =
             }
             settings.allowFileAccess = true
             settings.javaScriptEnabled = true
+            settings.mediaPlaybackRequiresUserGesture = false
 
             addJavascriptInterface(SystemUtils, "screenControl")
             loadUrl("http://localhost:8080/?config=${App.query}")
