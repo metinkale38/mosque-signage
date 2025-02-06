@@ -7,6 +7,7 @@ import "./PrayerTimes.css"
 import "./PrayerTimes.primary.css"
 import "./PrayerTimes.secondary.css"
 import "./PrayerTimes.highlight.css"
+import { second } from '../now';
 
 const PrayerTimes = ({ config = Default }) => {
   let [data, setData] = useState<PrayerTimesData>(new PrayerTimesData())
@@ -21,7 +22,7 @@ const PrayerTimes = ({ config = Default }) => {
     const interval = setInterval(() => {
       setLang((lang + 1) % config.languages.length);
       if (lang === 0) setAlternativeTime(!alternativeTime);
-    }, 10000);
+    }, 10 * second);
     return () => clearInterval(interval);
   }, [lang, alternativeTime, config.languages]);
 
@@ -30,9 +31,9 @@ const PrayerTimes = ({ config = Default }) => {
   }, [config]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
+    const timeout = setTimeout(async () => {
       if (data.times.length > 0)
-        setData(updatePrayerTimesData(data, config))
+        setData(await updatePrayerTimesData(data, config))
       if (config.screenOnOff) {
         var screenState = determineScreenStatus(data)
         if (screenState !== screenOn) {
@@ -44,7 +45,7 @@ const PrayerTimes = ({ config = Default }) => {
           setScreenOn(screenState);
         }
       }
-    }, 1000 - new Date().getTime() % 1000);
+    }, second - new Date().getTime() % second);
     return () => clearTimeout(timeout);
   }, [data, screenOn, config]);
 

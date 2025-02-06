@@ -5,6 +5,7 @@ import { LocalizedText, Text } from "../LocalizedText"
 import { getHolyDay, toHijri } from "./HijriDate"
 import moment from 'moment'
 import { Config } from './config'
+import { now } from '../now'
 
 export class PrayerTime {
   name: LocalizedText = { de: "", tr: "", bs: "" }
@@ -28,14 +29,7 @@ export class PrayerTimesData {
 }
 
 
-let mocktime = new URLSearchParams(window.location.search).get("mocktime")
-function now() {
-  if (mocktime) {
-    return moment(mocktime);
-  } else return moment();
-}
-
-export function updatePrayerTimesData(data: PrayerTimesData, config: Config): PrayerTimesData {
+export async function updatePrayerTimesData(data: PrayerTimesData, config: Config): Promise<PrayerTimesData> {
   let date = now();
 
   if (data.selectionIdx < 0) data = { ...data, selectionIdx: data.selectionIdx + 6 };
@@ -105,7 +99,7 @@ export function updatePrayerTimesData(data: PrayerTimesData, config: Config): Pr
   data = { ...data, countdown: `${countdown}`, selectionIdx: selectionIdx, time: time, highlight: highlight };
 
   if (Text.forMoment(date.startOf('day')).de !== data.date.de) {
-    window.location.reload();
+    return await getPrayerTimesData(config);
   }
   return data;
 }
@@ -136,7 +130,6 @@ export function determineScreenStatus(data: PrayerTimesData): boolean {
 
   return true;
 }
-
 
 
 
