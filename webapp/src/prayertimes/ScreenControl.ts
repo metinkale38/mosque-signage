@@ -3,7 +3,7 @@
 export let ScreenControl = {
 
     on(): void {
-        let screenControl = (window as any).screenControl
+        let screenControl = (window.top as any).screenControl
         if (screenControl) {
             screenControl.on();
         } else {
@@ -13,7 +13,7 @@ export let ScreenControl = {
     },
     off(): void {
         try {
-            let screenControl = (window as any).screenControl
+            let screenControl = (window.top as any).screenControl
             if (screenControl) {
                 screenControl.off();
             } else {
