@@ -1,10 +1,11 @@
 import VideoPlayback from "../videoplayback/videoplayback";
 import PhotoCarousel from "../photocarousel/photocarousel";
 import { Default } from "../prayertimes/config";
+import { now } from "../now";
 
 const Dashboard = ({ config = Default }) => {
 
-    var i = new Date().getHours() % 4;
+    var i = now().hour() % 4;
 
     var query = "";
     new URLSearchParams(window.location.search).forEach((value, key) => {

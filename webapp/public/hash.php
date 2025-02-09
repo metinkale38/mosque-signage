@@ -13,12 +13,6 @@ function getDirContents($dir) {
 
     foreach ($files as $key => $value) {
         $path = $dir . DIRECTORY_SEPARATOR . $value;
-
-        if(str_starts_with($path, "./logs")) continue;
-        //if($_REQUEST["hostname"] == "rpimosq"){
-            if(str_starts_with($path, "./images")) continue;
-            if(str_starts_with($path, "./videos")) continue;
-        //}
         if ($value != "hash.php"){
             if (!is_dir($path)) {
                 if(str_ends_with($path,".php")){
@@ -36,6 +30,3 @@ function getDirContents($dir) {
 }
 
 getDirContents('.');
-
-$log = "LAST_ACCESS=".date("Y-m-d_H:i:s")."\nLAST_IP=".$_SERVER['REMOTE_ADDR']."\nLAST_FORWARDEDFOR_HEADER=".$_SERVER['HTTP_X_FORWARDED_FOR']."\n";
-file_put_contents("./logs/".$_REQUEST["hostname"].".log", $log);
