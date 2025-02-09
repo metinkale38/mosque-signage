@@ -171,7 +171,7 @@ class OverlayService : Service() {
     val syncAsync: () -> Unit = {
         if (App.config.isNotEmpty()) {
             GlobalScope.launch {
-                if (sync(App.remoteHost, www, App.hostname))
+                if (sync(App.remoteHost, www))
                     restart(this@OverlayService)
             }
         }

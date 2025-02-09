@@ -3,7 +3,6 @@ package org.metinkale.mosquesignage
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.SharedPreferences
-import java.util.UUID
 
 
 class App : Application() {
@@ -36,21 +35,12 @@ class App : Application() {
                 prefs.edit().putBoolean("enabled", value).commit()
             }
 
-
-        val installationId
-            get() = prefs.getString("installationId", null) ?: run {
-                UUID.randomUUID().toString()
-                    .also { prefs.edit().putString("installationId", it).commit() }
-            }
-
         val remoteHost: String
             get() = config.takeIf { it.startsWith("http") }?.substringBefore("?")
                 ?: "https://metinkale38.github.io/mosque-signage"
 
-        val query: String get() = if (config.contains("?") == true) config.substringAfter("?") else config
+        val query: String get() = if (config.contains("?") == true) config.substringAfter("?") else "config=$config"
 
-        val hostname: String
-            get() = "android-$query-$installationId"
     }
 
 }

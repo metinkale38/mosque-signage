@@ -9,11 +9,11 @@ import java.net.URL
 import java.security.MessageDigest
 import java.util.Locale
 
-suspend fun sync(remote: String, www: File, hostname: String): Boolean = runCatching {
+suspend fun sync(remote: String, www: File): Boolean = runCatching {
     var reloadNeeded = false
 
     if (!www.exists()) www.mkdirs()
-    val lines = fetchRemoteHashes("$remote/hash.php?hostname=$hostname")
+    val lines = fetchRemoteHashes("$remote/hash.php")
     val remoteFiles = parseRemoteHashes(lines)
 
     for ((file, hash) in remoteFiles) {
