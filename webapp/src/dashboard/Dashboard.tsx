@@ -2,10 +2,20 @@ import VideoPlayback from "../videoplayback/videoplayback";
 import PhotoCarousel from "../photocarousel/photocarousel";
 import { Default } from "../prayertimes/config";
 import { now } from "../now";
+import { useEffect, useState } from "react";
 
 const Dashboard = ({ config = Default }) => {
 
-    var i = now().hour() % 4;
+    const [currentHour, setCurrentHour] = useState(now().hour());
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentHour(now().hour());
+        }, 60000);
+        return () => clearInterval(interval);
+    }, []);
+
+    var i = currentHour % 4;
 
     var query = "";
     new URLSearchParams(window.location.search).forEach((value, key) => {

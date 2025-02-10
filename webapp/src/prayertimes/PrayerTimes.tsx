@@ -19,6 +19,11 @@ const PrayerTimes = ({ config = Default }) => {
   let [alternativeTime, setAlternativeTime] = useState(false);
 
   useEffect(() => {
+    const message = data.highlight?.name ? "<LowVolume>" : "<FullVolume>";
+    (window.top as Window).postMessage(message, "*");
+  }, [data.highlight?.name]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setLang((lang + 1) % config.languages.length);
       if (lang === 0) setAlternativeTime(!alternativeTime);

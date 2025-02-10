@@ -109,6 +109,7 @@ class OverlayService : Service() {
                 keyCode: Int,
                 event: KeyEvent?
             ): Boolean {
+                Log.e("OverlayService", "Pressed KeyCode: $keyCode")
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     stopSelf()
                     App.active = false

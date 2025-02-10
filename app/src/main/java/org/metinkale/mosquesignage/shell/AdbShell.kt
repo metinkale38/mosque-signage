@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.metinkale.mosquesignage.App
 import java.io.File
+import java.io.IOException
 import java.net.Socket
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -18,13 +19,19 @@ object AdbShell : Shell, AdbBase64 {
         withContext(Dispatchers.IO) {
             Log.e("AdbShell", ">>$cmd")
             try {
-                var socket = Socket("localhost", 5555);
+                var socket = Socket("localhost", 5555)
+                socket.soTimeout = 10000
                 var connection = AdbConnection.create(socket, crypto)
                 connection.connect()
-                connection.open("shell:$cmd")
+                try {
+                    connection.open("shell:$cmd").read()?.decodeToString()?.let {
+                        Log.e("AdbShell", "<<$it")
+                    }
+                } catch (_: IOException) {
+                }
                 connection.close()
             } catch (e: Exception) {
-                Log.e("AdbControl", e.message, e);
+                Log.e("AdbShell", e.message, e);
             }
         }
     }

@@ -9,7 +9,6 @@ import org.metinkale.mosquesignage.shell.Shell
 
 object SystemUtils {
 
-
     @JavascriptInterface
     fun on() {
         Log.e("System", "On")
