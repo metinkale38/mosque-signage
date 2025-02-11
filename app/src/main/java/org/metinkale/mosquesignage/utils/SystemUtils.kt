@@ -15,7 +15,7 @@ object SystemUtils {
         if (RootShell.supported) {
             runBlocking { RootShell.exec("mt8127_hdmi init 1") } // Fire TV with LineageOS
         } else if (Shell.supported) {
-            runBlocking { Shell.exec("dumpsys power | grep \"Display Power: state=OFF\" && input keyevent 26") } // Android TV (without Stick)
+            runBlocking { Shell.exec("dumpsys display | grep \"mScreenState=OFF\" && input keyevent 26") } // Android TV (without Stick)
         }
     }
 
@@ -25,7 +25,7 @@ object SystemUtils {
         if (RootShell.supported) {
             runBlocking { RootShell.exec("mt8127_hdmi init 0") } // Fire TV with LineageOS
         } else if (Shell.supported) {
-            runBlocking { Shell.exec("dumpsys power | grep \"Display Power: state=ON\" && input keyevent 26") } // Android TV (without Stick)
+            runBlocking { Shell.exec("dumpsys display | grep \"mScreenState=ON\" && input keyevent 223") } // Android TV (without Stick)
         }
     }
 

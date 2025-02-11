@@ -51,7 +51,7 @@ export const configs: Config[] = [
       ...Default,
       key: "igbdbs",
       city: "Braunschweig",
-      bgColor: "#445952",
+      bgColor: "#014325",
       style: "secondary",
       languages: ["de", "bs"]
    },
