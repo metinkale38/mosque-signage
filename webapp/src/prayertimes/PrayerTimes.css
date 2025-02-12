@@ -1,5 +1,5 @@
 .parent {
-    @apply flex flex-col text-center text-white justify-around;
+    @apply flex flex-col text-center text-white justify-around landscape:pb-6;
 }
 
 .holyday {

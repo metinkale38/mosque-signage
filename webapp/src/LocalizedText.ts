@@ -11,7 +11,7 @@ export const Text = {
         FAJR: { de: "Fajr", tr: "İmsak", bs: "Zora" },
         SABAH: { de: "Morgengebet", tr: "Sabah", bs: "Sabah" },
         CUMA: { de: "Freitagsgebet", tr: "Cuma Namazı", bs: "Džuma" },
-        SUN: { de: "Sonne", tr: "Güneş", bs: "Sunce" },
+        SUN: { de: "Sonne", tr: "Güneş", bs: "Izlazak Sunce" },
         DHUHR: { de: "Dhuhr", tr: "Öğle", bs: "Podne" },
         ASR: { de: "Asr", tr: "İkindi", bs: "Ikindija" },
         MAGHRIB: { de: "Maghrib", tr: "Akşam", bs: "Akšam" },
