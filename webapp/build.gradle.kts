@@ -11,6 +11,14 @@ tasks.register<NpmTask>("npmBuild") {
     args.addAll("run", "build")
 }
 
+tasks.register<NpmTask>("npmTest") {
+    args.addAll("run", "test")
+}
+
+tasks.register<NpmTask>("npmUpdateSnapshots") {
+    args.addAll("run", "update-snapshots")
+}
+
 tasks.register("npmBuildStatic") {
     dependsOn("npmBuild")
     group = "npm"

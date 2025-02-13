@@ -1,0 +1,1 @@
+export let urlParams = new URLSearchParams(window.location.search + window.location.hash)

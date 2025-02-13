@@ -4,6 +4,7 @@ import './index.css';
 import PrayerTimes from './prayertimes/PrayerTimes';
 import { configs, Default } from './prayertimes/config';
 import Dashboard from './dashboard/Dashboard';
+import { urlParams } from './params';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -29,28 +30,28 @@ function rotate(rotate: "rotate-90" | "-rotate-90" | "rotate-180", params: URLSe
 
 
 function Router() {
-  var params = new URLSearchParams(window.location.search)
 
-  switch (params.get("rotate")) {
-    case "90": return rotate("rotate-90", params)
-    case "270": return rotate("-rotate-90", params)
-    case "180": return rotate("rotate-180", params)
+
+  switch (urlParams.get("rotate")) {
+    case "90": return rotate("rotate-90", urlParams)
+    case "270": return rotate("-rotate-90", urlParams)
+    case "180": return rotate("rotate-180", urlParams)
   }
 
   var selectedConfig = Default;
   for (let config of configs) {
     if (window.location.search === "?" + config.key
-      || params.get("config") === config.key
+      || urlParams.get("config") === config.key
     ) {
       selectedConfig = config;
     }
   }
 
-  params.forEach((value, key) => {
+  urlParams.forEach((value, key) => {
     (selectedConfig as any)[key] = value;
   })
 
-  if (params.get("page") === "dashboard") {
+  if (urlParams.get("page") === "dashboard") {
     return (<Dashboard />)
   } else {
     return (<PrayerTimes config={selectedConfig} />)

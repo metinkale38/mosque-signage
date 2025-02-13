@@ -3,6 +3,7 @@ import PhotoCarousel from "../photocarousel/photocarousel";
 import { Default } from "../prayertimes/config";
 import { now } from "../now";
 import { useEffect, useState } from "react";
+import { urlParams } from "../params";
 
 const Dashboard = ({ config = Default }) => {
 
@@ -18,7 +19,7 @@ const Dashboard = ({ config = Default }) => {
     var i = currentHour % 4;
 
     var query = "";
-    new URLSearchParams(window.location.search).forEach((value, key) => {
+    urlParams.forEach((value, key) => {
         if (key !== "rotate" && key !== "page" && key !== "bgColor")
             query += "&" + key + "=" + value;
     })
