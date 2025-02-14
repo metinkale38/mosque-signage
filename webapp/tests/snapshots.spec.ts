@@ -6,7 +6,7 @@ let datetime = [
   { name: "No Selection", time: "2025-01-31 01:00:00" },
   { name: "Highlight", time: "2025-01-31 07:30:00" },
   { name: "Dhuhr", time: "2025-01-31 14:00:00" },
-  { name: "Holyday", time: "2025-02-13 22:00:00" },
+  { name: "Special Day", time: "2025-02-13 22:00:00" },
 ]
 
 test.beforeEach(async ({ }, testInfo) => {

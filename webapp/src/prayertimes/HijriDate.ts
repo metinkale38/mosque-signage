@@ -17,7 +17,7 @@ export enum HijriMonth {
 }
 
 
-export async function getHolyDay(date: HijriDate) {
+export async function getSpecialDays(date: HijriDate) {
     if (date.month === HijriMonth.MUHARRAM && date.day === 1) return Text.HijriDays.ISLAMIC_NEW_YEAR;
     if (date.month === HijriMonth.MUHARRAM && date.day === 10) return Text.HijriDays.ASHURA;
     if (date.month === HijriMonth.RABIAL_AWWAL && date.day === 11) return Text.HijriDays.MAWLID_AL_NABI;
@@ -28,7 +28,7 @@ export async function getHolyDay(date: HijriDate) {
         if (date.month === HijriMonth.RAJAB && date.day <= 6) return Text.HijriDays.RAGAIB
         else if (date.month === HijriMonth.JUMADAAL_AKHIR && date.day >= 29) {
             // it might be Rajab only if its the last day of the month
-            if((await toHijri(date.moment.add(1,"days"))).month === HijriMonth.RAJAB){
+            if ((await toHijri(date.moment.add(1, "days"))).month === HijriMonth.RAJAB) {
                 return Text.HijriDays.RAGAIB
             }
         }

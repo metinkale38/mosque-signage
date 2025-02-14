@@ -63,9 +63,9 @@ const PrayerTimes = ({ config = Default }) => {
       <div className={'absolute left-0 top-0 right-0 bottom-0 preventBurnInHue'} style={{ backgroundColor: config.bgColor }}></div>
       <div className={'absolute left-0 top-0 right-0 bottom-0 flex flex-col'}>
         {
-          data.holyDay != null ?
-            (<p className={"holyday"}>
-              {localize(data.holyDay!!)}
+          data.specialDay != null ?
+            (<p className={"specialday"}>
+              {localize(data.specialDay!!)}
             </p>) : <></>
         }
         <div className={"parent grow" + (window.self !== window.top ? "" : " preventBurnInMove")}>

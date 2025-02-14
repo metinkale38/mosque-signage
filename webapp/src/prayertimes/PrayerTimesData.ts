@@ -2,7 +2,7 @@
 import 'moment/locale/de'
 import 'moment/locale/tr'
 import { LocalizedText, Text } from "../LocalizedText"
-import { getHolyDay, toHijri } from "./HijriDate"
+import { getSpecialDays, toHijri } from "./HijriDate"
 import moment from 'moment'
 import { Config } from './config'
 import { now } from '../now'
@@ -16,7 +16,7 @@ export class PrayerTimesData {
   city: string = ""
   date: LocalizedText = { de: "", tr: "", bs: "" }
   hijri: LocalizedText = { de: "", tr: "", bs: "" }
-  holyDay: LocalizedText | undefined = undefined
+  specialDay: LocalizedText | undefined = undefined
   times: Array<PrayerTime> = []
   sabah: PrayerTime | undefined = undefined;
   cuma: PrayerTime | undefined = undefined;
@@ -142,7 +142,7 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
       var date = today.format("YYYY-MM-DD");
 
       let hijri = await toHijri(today);
-      let holyDay = config.showHolyDay ? await getHolyDay(hijri) : null;
+      let specialDay = config.showSpecialDays ? await getSpecialDays(hijri) : null;
 
 
       var line = data.split("\n").find(line => line.startsWith(date))
@@ -187,7 +187,7 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
         city: config.city,
         date: Text.forMoment(today),
         hijri: Text.forHijriDate(hijri),
-        holyDay: holyDay,
+        specialDay: specialDay,
         times: [
           { name: Text.PrayerTimes.FAJR, time: fajr },
           { name: Text.PrayerTimes.SUN, time: sun },

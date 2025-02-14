@@ -7,7 +7,7 @@ export interface Config {
    sabah: number | undefined
    showHighlight: boolean
    showHighlightAlways: boolean
-   showHolyDay: boolean
+   showSpecialDays: boolean
    bgColor: string
    style: string
    languages: string[]
@@ -22,7 +22,7 @@ export const Default: Config = {
    sabah: undefined,
    showHighlight: true,
    showHighlightAlways: false,
-   showHolyDay: true,
+   showSpecialDays: true,
    bgColor: "#0069a8",
    style: "primary",
    languages: ["de", "tr"]

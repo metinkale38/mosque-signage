@@ -2,7 +2,7 @@
     @apply flex flex-col text-center text-white justify-around landscape:pb-6;
 }
 
-.holyday {
+.specialday {
     @apply bg-black/30 p-[1.5rem] text-white text-center font-medium col-span-2 text-[4rem] [line-height:1] flex justify-center items-center;
 }
 
