@@ -71,9 +71,9 @@ export const Text = {
         }
     },
     forMoment(date: moment.Moment) {
-        let dateTr = date.locale("tr").format("DD MMMM YYYY");
-        let dateDe = date.locale("de").format("DD MMMM YYYY");
-        let dateBs = date.locale("bs").format("DD MMMM YYYY");
+        let dateTr = date.locale("tr").format("D MMMM YYYY");
+        let dateDe = date.locale("de").format("D MMMM YYYY");
+        let dateBs = date.locale("bs").format("D MMMM YYYY");
         return { de: dateDe, tr: dateTr, bs: dateBs }
     }
 
