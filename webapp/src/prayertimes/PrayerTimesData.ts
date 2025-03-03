@@ -94,12 +94,12 @@ export async function updatePrayerTimesData(data: PrayerTimesData, config: Confi
         case 3/*Asr*/: if (passed <= 20) highlight = { time: data.times[3].time, name: Text.CurrentPrayerTime.ASR }; break;
         case 4/*Maghrib*/: if (passed <= 20) highlight = { time: data.times[4].time, name: Text.CurrentPrayerTime.MAGHRIB }; break;
         case 5/*Ishaa*/:
-            if(data.isRamadan){
-                if (passed <= 70) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA };
-            }else{
-                if (passed <= 20) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA };
-            }
-            break;
+          if (data.isRamadan) {
+            if (passed <= 70) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.TARAWIH };
+          } else {
+            if (passed <= 20) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA };
+          }
+          break;
       }
     }
   }
@@ -180,9 +180,16 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
 
       }
 
+      var isRamadan = hijri.month === HijriMonth.RAMADAN;
+
       var [fajr, sun, dhuhr, asr, maghrib, ishaa] = line!!.split(";").slice(1);
 
-      var sabah = moment(sun, ['h:m a', 'H:m']).add(config.sabah, "minutes").format("HH:mm");
+      let sabahMinutes = isRamadan && config.sabahRamadan ? config.sabahRamadan : config.sabah;
+
+      var sabah = sabahMinutes ? (sabahMinutes > 0 ?
+        moment(fajr, ['h:m a', 'H:m']).add(sabahMinutes, "minutes").format("HH:mm") :
+        moment(sun, ['h:m a', 'H:m']).add(sabahMinutes, "minutes").format("HH:mm")
+      ) : undefined;
 
       var cuma: string | undefined = dhuhr.startsWith("13:") ? config.cumaSummer : config.cumaWinter;
       if (cuma && cuma < dhuhr) cuma = undefined;
@@ -205,7 +212,7 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
         ],
         sabah: config.sabah ? { name: Text.PrayerTimes.SABAH, time: sabah } : undefined,
         cuma: cuma ? { name: Text.PrayerTimes.CUMA, time: cuma } : undefined,
-        isRamadan: hijri.month === HijriMonth.RAMADAN
+        isRamadan: isRamadan
       } as PrayerTimesData, config)
 
     })

@@ -24,6 +24,7 @@ export const Text = {
         ASR: { de: "Asr Gebet", tr: "İkindi Namazı", bs: "Ikindija-namaz" },
         MAGHRIB: { de: "Maghrib Gebet", tr: "Akşam Namazı", bs: "Akšam-namaz" },
         ISHAA: { de: "Ishaa Gebet", tr: "Yatsı Namazı", bs: "Jacija-namaz" },
+        TARAWIH: { de: "Terawih Gebet", tr: "Teravih Namazı", bs: "Teravih-namaz" },
     },
     HijriMonths: {
         MUHARRAM: { de: "Muharram", tr: "Muharrem", bs: "Muharrem" },

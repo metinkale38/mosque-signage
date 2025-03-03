@@ -5,6 +5,7 @@ export interface Config {
    cumaSummer: string | undefined
    cumaWinter: string | undefined
    sabah: number | undefined
+   sabahRamadan: number | undefined
    showHighlight: boolean
    showHighlightAlways: boolean
    showSpecialDays: boolean
@@ -20,6 +21,7 @@ export const Default: Config = {
    cumaSummer: undefined,
    cumaWinter: undefined,
    sabah: undefined,
+   sabahRamadan: undefined,
    showHighlight: true,
    showHighlightAlways: false,
    showSpecialDays: true,
@@ -37,7 +39,8 @@ export const configs: Config[] = [
       screenOnOff: true,
       cumaSummer: "14:30",
       cumaWinter: "12:30",
-      sabah: -30
+      sabah: -30,
+      sabahRamadan: 15
    },
    {
       ...Default,
