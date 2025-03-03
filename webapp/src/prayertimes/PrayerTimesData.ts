@@ -2,7 +2,7 @@
 import 'moment/locale/de'
 import 'moment/locale/tr'
 import { LocalizedText, Text } from "../LocalizedText"
-import { getSpecialDays, toHijri } from "./HijriDate"
+import { getSpecialDays, HijriMonth, toHijri } from "./HijriDate"
 import moment from 'moment'
 import { Config } from './config'
 import { now } from '../now'
@@ -24,7 +24,8 @@ export class PrayerTimesData {
   time: string = "00:00";
   selectionIdx: number = -1;
   highlight: { name: LocalizedText, time: string } | undefined = undefined;
-  kerahat: Boolean = false;
+  kerahat: boolean = false;
+  isRamadan: boolean = false;
   currentLanguage: number = 0;
 }
 
@@ -92,7 +93,13 @@ export async function updatePrayerTimesData(data: PrayerTimesData, config: Confi
           break;
         case 3/*Asr*/: if (passed <= 20) highlight = { time: data.times[3].time, name: Text.CurrentPrayerTime.ASR }; break;
         case 4/*Maghrib*/: if (passed <= 20) highlight = { time: data.times[4].time, name: Text.CurrentPrayerTime.MAGHRIB }; break;
-        case 5/*Ishaa*/: if (passed <= 20) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA }; break;
+        case 5/*Ishaa*/:
+            if(data.isRamadan){
+                if (passed <= 70) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA };
+            }else{
+                if (passed <= 20) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA };
+            }
+            break;
       }
     }
   }
@@ -197,7 +204,8 @@ export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
           { name: Text.PrayerTimes.ISHAA, time: ishaa }
         ],
         sabah: config.sabah ? { name: Text.PrayerTimes.SABAH, time: sabah } : undefined,
-        cuma: cuma ? { name: Text.PrayerTimes.CUMA, time: cuma } : undefined
+        cuma: cuma ? { name: Text.PrayerTimes.CUMA, time: cuma } : undefined,
+        isRamadan: hijri.month === HijriMonth.RAMADAN
       } as PrayerTimesData, config)
 
     })
