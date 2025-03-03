@@ -11,7 +11,6 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.metinkale.mosquesignage.utils.ManualAPKUpdater
 import org.metinkale.mosquesignage.utils.SystemUtils
 import org.metinkale.mosquesignage.utils.askConfigDialog
 import kotlin.apply
@@ -53,11 +52,6 @@ class MainActivity : ComponentActivity() {
                 val current = prefs.getInt("rotate", 0)
                 prefs.edit().putInt("rotate", (current + 90) % 360).apply()
                 OverlayService.restart(this@MainActivity)
-            },
-            "Update App ($versionCode)" to {
-                lifecycleScope.launch {
-                    ManualAPKUpdater(this@MainActivity).checkForUpdate()
-                }
             },
             "Test On/Off" to {
                 Toast.makeText(
