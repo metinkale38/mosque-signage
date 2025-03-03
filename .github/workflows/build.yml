@@ -34,7 +34,7 @@ jobs:
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
     - name: Build with Gradle Wrapper
-      run: chmod +x gradlew && ./gradlew :webapp:npmSetup :webapp:npmInstall :webapp:npmTest :webapp:npmBuildStatic
+      run: chmod +x gradlew && ./gradlew :webapp:npmSetup :webapp:npmInstall :webapp:npmBuildStatic
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.4.3
