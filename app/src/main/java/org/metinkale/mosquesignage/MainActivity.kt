@@ -32,14 +32,6 @@ class MainActivity : ComponentActivity() {
 
     private fun ListView.init() = apply {
 
-        val versionCode = try {
-            val pInfo = packageManager.getPackageInfo(packageName, 0)
-            pInfo.versionCode
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-            0
-        }
-
         val options: Array<Pair<String, () -> Unit>> = arrayOf(
             "Start" to {
                 App.active = true

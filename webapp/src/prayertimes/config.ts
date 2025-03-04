@@ -16,7 +16,7 @@ export interface Config {
 
 export const Default: Config = {
    key: '',
-   city: "Braunschweig",
+   city: "./Braunschweig.csv",
    screenOnOff: false,
    cumaSummer: undefined,
    cumaWinter: undefined,
@@ -45,7 +45,7 @@ export const configs: Config[] = [
    {
       ...Default,
       key: "ditibbs",
-      city: "Braunschweig",
+      city: "./Braunschweig.csv",
       bgColor: "#00366b",
       style: "secondary",
       showHighlightAlways: true
@@ -53,7 +53,7 @@ export const configs: Config[] = [
    {
       ...Default,
       key: "igbdbs",
-      city: "Braunschweig-vaktija-ba",
+      city: "./Braunschweig-vaktija-ba.csv",
       bgColor: "#014325",
       style: "primary",
       languages: ["de", "bs"]
@@ -61,14 +61,25 @@ export const configs: Config[] = [
    {
       ...Default,
       key: "neustadt",
-      city: "Neustadt",
+      city: "./Neustadt.csv",
       bgColor: "#0069a8"
    },
    {
       ...Default,
       key: "goslar",
-      city: "Goslar",
+      city: "./Goslar.csv",
       bgColor: "#008236"
+   },
+   {
+      ...Default,
+      key: "herzberg",
+      city: "./Herzberg.csv",
+      bgColor: "#014325"
+   }, {
+      ...Default,
+      key: "seesen",
+      city: "./Seesen.csv",
+      bgColor: "#014325"
    }
 ];
 

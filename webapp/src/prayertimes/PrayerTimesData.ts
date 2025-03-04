@@ -141,7 +141,7 @@ export function determineScreenStatus(data: PrayerTimesData): boolean {
 
 
 export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
-  return fetch("./" + config.city + ".csv")
+  return fetch(config.city)
     .then(response => {
       return response.text()
     }).then(async data => {
