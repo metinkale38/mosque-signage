@@ -47,8 +47,15 @@ export const configs: Config[] = [
       key: "ditibbs",
       city: "./Braunschweig.csv",
       bgColor: "#00366b",
-      style: "secondary",
+      style: "primary",
       showHighlightAlways: true
+   },
+   {
+      ...Default,
+      key: "uobs",
+      city: "./Braunschweig.csv",
+      bgColor: "#014325",
+      style: "primary"
    },
    {
       ...Default,
@@ -75,7 +82,8 @@ export const configs: Config[] = [
       key: "herzberg",
       city: "./Herzberg.csv",
       bgColor: "#014325"
-   }, {
+   },
+   {
       ...Default,
       key: "seesen",
       city: "./Seesen.csv",
