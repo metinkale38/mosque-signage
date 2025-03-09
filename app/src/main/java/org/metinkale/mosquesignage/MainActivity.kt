@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.metinkale.mosquesignage.utils.ManualAPKUpdater
 import org.metinkale.mosquesignage.utils.SystemUtils
 import org.metinkale.mosquesignage.utils.askConfigDialog
 import kotlin.apply
@@ -31,6 +32,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun ListView.init() = apply {
+        val versionCode = try {
+            val pInfo = packageManager.getPackageInfo(packageName, 0)
+            pInfo.versionCode
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            0
+        }
+
 
         val options: Array<Pair<String, () -> Unit>> = arrayOf(
             "Start" to {
@@ -44,6 +53,11 @@ class MainActivity : ComponentActivity() {
                 val current = prefs.getInt("rotate", 0)
                 prefs.edit().putInt("rotate", (current + 90) % 360).apply()
                 OverlayService.restart(this@MainActivity)
+            },
+            "Update App ($versionCode)" to {
+                lifecycleScope.launch {
+                    ManualAPKUpdater(this@MainActivity).checkForUpdate()
+                }
             },
             "Test On/Off" to {
                 Toast.makeText(
