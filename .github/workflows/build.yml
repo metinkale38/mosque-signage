@@ -70,15 +70,15 @@ jobs:
       - name: Build with Gradle
         env:
           ANDROID_SIGNING_PASSWORD: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
-        run: ./gradlew :app:build
+        run: ./gradlew :app:assembleGithubRelease
 
       - name: Upload a APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: mosque-signage-android
           path: |
-            app/build/outputs/apk/release/app-release.apk
-            app/build/outputs/apk/release/app-release.json
+            app/build/outputs/apk/github/release/*.apk
+            app/build/outputs/apk/github/release/app-release.json
 
   deploypages:
     needs: [buildWebapp, buildAndroid]

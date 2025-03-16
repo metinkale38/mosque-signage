@@ -42,6 +42,7 @@ const Configurator = () => {
 
     useEffect(() => {
         fetchCities("https://prayertimes.dynv6.net/api", 0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [/*Do not add fetchCities*/]);
 
     const handleSelectChange = (levelIndex: number, value: string) => {

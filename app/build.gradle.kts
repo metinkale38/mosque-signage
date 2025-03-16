@@ -1,5 +1,4 @@
 import com.google.gson.Gson
-import kotlin.io.encoding.Base64
 
 plugins {
     alias(libs.plugins.android.application)
@@ -111,8 +110,9 @@ tasks.register("generateReleaseInfo") {
     description = "Generiert eine JSON-Datei mit Release-Informationen."
 
     doLast {
-        val outputDir = android.applicationVariants
-            .find { it.name == "release" }?.outputs?.firstOrNull()?.outputFile?.parentFile!!
+        val outputApk = android.applicationVariants
+            .find { it.name == "githubRelease" }?.outputs?.firstOrNull()?.outputFile
+        val outputDir = outputApk?.parentFile!!
 
         if (!outputDir.exists()) {
             outputDir.mkdirs()
@@ -121,15 +121,15 @@ tasks.register("generateReleaseInfo") {
         val releaseInfo = mapOf(
             "version" to android.defaultConfig.versionName,
             "versionCode" to android.defaultConfig.versionCode,
-            "url" to "https://metinkale38.github.io/mosque-signage/app-release.apk",
+            "url" to "https://metinkale38.github.io/mosque-signage/${outputApk.name}",
         )
 
         val jsonOutput = Gson().toJson(releaseInfo)
-        val outputFile = File(outputDir, "app-release.json")
-        outputFile.writeText(jsonOutput)
+        val outputJson = File(outputDir, "app-release.json")
+        outputJson.writeText(jsonOutput)
     }
 }
 
-tasks.named("build").configure {
+tasks.named("preBuild").configure {
     finalizedBy("generateReleaseInfo")
 }

@@ -1,9 +1,11 @@
 package org.metinkale.mosquesignage.utils
 
 import android.content.Context
+import android.content.Intent
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import org.metinkale.mosquesignage.AdvancedConfig
 import org.metinkale.mosquesignage.App
 import org.metinkale.mosquesignage.OverlayService
 
@@ -20,8 +22,13 @@ fun Context.askConfigDialog() {
     builder.setPositiveButton("OK") { dialog, _ ->
         val userInput = input.text.toString()
         App.config = userInput.lowercase()
-        OverlayService.Companion.restart(this)
+        OverlayService.restart(this)
     }
+    builder.setNeutralButton("Advanced") { dialog, _ ->
+        dialog.cancel()
+        startActivity(Intent(this, AdvancedConfig::class.java))
+    }
+
 
     builder.setNegativeButton("Cancel") { dialog, _ ->
         dialog.cancel()
