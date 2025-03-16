@@ -1,3 +1,5 @@
+import { urlParams } from "../params"
+
 export interface Config {
    key: string
    city: string
@@ -14,8 +16,9 @@ export interface Config {
    languages: string[]
 }
 
+
 export const Default: Config = {
-   key: '',
+   key: 'default',
    city: "./Braunschweig.csv",
    screenOnOff: false,
    cumaSummer: undefined,
@@ -30,7 +33,45 @@ export const Default: Config = {
    languages: ["de", "tr"]
 };
 
+export function getConfig(): Config {
+   var selectedConfig = { ...Default };
+   for (let config of configs) {
+      if (window.location.search === "?" + config.key
+         || urlParams.get("config") === config.key
+      ) {
+         selectedConfig = config;
+      }
+   }
 
+   urlParams.forEach((value, key) => {
+      if (key === "languages")
+         (selectedConfig as any)[key] = value.split(";");
+      else
+         (selectedConfig as any)[key] = value;
+   })
+   return selectedConfig;
+}
+
+export function toUrlParam(config: Config): string {
+   const urlParams: string[] = [];
+
+   for (const key in config) {
+      if (config.hasOwnProperty(key) && key !== "page") {
+         const value = (config as any)[key];
+         const defaultValue = (Default as any)[key];
+         if (value !== defaultValue) {
+            if (value) {
+               if (key === "languages")
+                  urlParams.push(`languages=${value.join(";")}`);
+               else
+                  urlParams.push(`${key}=${encodeURIComponent(value)}`);
+            }
+         }
+      }
+   }
+
+   return urlParams.length > 0 ? `?${urlParams.join('&')}` : '';
+}
 
 export const configs: Config[] = [
    {

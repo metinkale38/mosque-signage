@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import PrayerTimes from './prayertimes/PrayerTimes';
-import { configs, Default } from './prayertimes/config';
+import { getConfig } from './prayertimes/config';
 import Dashboard from './dashboard/Dashboard';
 import { urlParams } from './params';
+import Configurator from './Configurator';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -31,6 +32,7 @@ function rotate(rotate: "rotate-90" | "-rotate-90" | "rotate-180", params: URLSe
 
 function Router() {
 
+  if (urlParams.get("page") === "config") return Configurator()
 
   switch (urlParams.get("rotate")) {
     case "90": return rotate("rotate-90", urlParams)
@@ -38,18 +40,7 @@ function Router() {
     case "180": return rotate("rotate-180", urlParams)
   }
 
-  var selectedConfig = Default;
-  for (let config of configs) {
-    if (window.location.search === "?" + config.key
-      || urlParams.get("config") === config.key
-    ) {
-      selectedConfig = config;
-    }
-  }
-
-  urlParams.forEach((value, key) => {
-    (selectedConfig as any)[key] = value;
-  })
+  var selectedConfig = getConfig()
 
   if (urlParams.get("page") === "dashboard") {
     return (<Dashboard />)

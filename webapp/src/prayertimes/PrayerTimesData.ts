@@ -6,6 +6,7 @@ import { getSpecialDays, HijriMonth, toHijri } from "./HijriDate"
 import moment from 'moment'
 import { Config } from './config'
 import { now } from '../now'
+import { cachedFetch } from '../cachedFetch'
 
 export class PrayerTime {
   name: LocalizedText = { de: "", tr: "", bs: "" }
@@ -141,80 +142,77 @@ export function determineScreenStatus(data: PrayerTimesData): boolean {
 
 
 export function getPrayerTimesData(config: Config): Promise<PrayerTimesData> {
-  return fetch(config.city)
-    .then(response => {
-      return response.text()
-    }).then(async data => {
-      let today = now()
-      var date = today.format("YYYY-MM-DD");
+  return cachedFetch(config.city).then(async data => {
+    let today = now()
+    var date = today.format("YYYY-MM-DD");
 
-      let hijri = await toHijri(today);
-      let specialDay = config.showSpecialDays ? await getSpecialDays(hijri) : null;
+    let hijri = await toHijri(today);
+    let specialDay = config.showSpecialDays ? await getSpecialDays(hijri) : null;
 
 
-      var line = data.split("\n").find(line => line.startsWith(date))
+    var line = data.split("\n").find(line => line.startsWith(date))
 
-      if (line === undefined) { // fallback ignoring year
-        line = data.split("\n").find(line => line.substring(4).startsWith(date.substring(4)))
+    if (line === undefined) { // fallback ignoring year
+      line = data.split("\n").find(line => line.substring(4).startsWith(date.substring(4)))
 
 
-        var lineTz = new Date(line?.split(";")[0]! + " 10:00").getTimezoneOffset() / 60;
-        var todayTz = new Date(date + " 10:00").getTimezoneOffset() / 60;
+      var lineTz = new Date(line?.split(";")[0]! + " 10:00").getTimezoneOffset() / 60;
+      var todayTz = new Date(date + " 10:00").getTimezoneOffset() / 60;
 
 
 
-        if (lineTz !== todayTz) {
-          var array = line!!.split(";").slice(1).map(function (t) {
-            var [hour, minute] = t.split(":");
-            var hourInt = parseInt(hour) + (lineTz - todayTz);
-            while (hourInt < 0) hourInt += 24;
-            while (hourInt > 23) hourInt -= 24;
-            if (hourInt < 10) hour = "0" + hourInt; else hour = "" + hourInt;
-            return hour + ":" + minute;
-          });
+      if (lineTz !== todayTz) {
+        var array = line!!.split(";").slice(1).map(function (t) {
+          var [hour, minute] = t.split(":");
+          var hourInt = parseInt(hour) + (lineTz - todayTz);
+          while (hourInt < 0) hourInt += 24;
+          while (hourInt > 23) hourInt -= 24;
+          if (hourInt < 10) hour = "0" + hourInt; else hour = "" + hourInt;
+          return hour + ":" + minute;
+        });
 
 
-          line = date + ";" + array.join(";");
-        }
-
-
+        line = date + ";" + array.join(";");
       }
 
-      var isRamadan = hijri.month === HijriMonth.RAMADAN;
 
-      var [fajr, sun, dhuhr, asr, maghrib, ishaa] = line!!.split(";").slice(1);
+    }
 
-      let sabahMinutes = isRamadan && config.sabahRamadan ? config.sabahRamadan : config.sabah;
+    var isRamadan = hijri.month === HijriMonth.RAMADAN;
 
-      var sabah = sabahMinutes ? (sabahMinutes > 0 ?
-        moment(fajr, ['h:m a', 'H:m']).add(sabahMinutes, "minutes").format("HH:mm") :
-        moment(sun, ['h:m a', 'H:m']).add(sabahMinutes, "minutes").format("HH:mm")
-      ) : undefined;
+    var [fajr, sun, dhuhr, asr, maghrib, ishaa] = line!!.split(";").slice(1);
 
-      var cuma: string | undefined = dhuhr.startsWith("13:") ? config.cumaSummer : config.cumaWinter;
-      if (cuma && cuma < dhuhr) cuma = undefined;
-      if (today.isoWeekday() !== 5) {
-        cuma = undefined;
-      }
+    let sabahMinutes = isRamadan && config.sabahRamadan ? config.sabahRamadan : config.sabah;
 
-      return updatePrayerTimesData({
-        city: config.city,
-        date: Text.forMoment(today),
-        hijri: Text.forHijriDate(hijri),
-        specialDay: specialDay,
-        times: [
-          { name: Text.PrayerTimes.FAJR, time: fajr },
-          { name: Text.PrayerTimes.SUN, time: sun },
-          { name: Text.PrayerTimes.DHUHR, time: dhuhr },
-          { name: Text.PrayerTimes.ASR, time: asr },
-          { name: Text.PrayerTimes.MAGHRIB, time: maghrib },
-          { name: Text.PrayerTimes.ISHAA, time: ishaa }
-        ],
-        sabah: config.sabah ? { name: Text.PrayerTimes.SABAH, time: sabah } : undefined,
-        cuma: cuma ? { name: Text.PrayerTimes.CUMA, time: cuma } : undefined,
-        isRamadan: isRamadan
-      } as PrayerTimesData, config)
+    var sabah = sabahMinutes ? (sabahMinutes > 0 ?
+      moment(fajr, ['h:m a', 'H:m']).add(sabahMinutes, "minutes").format("HH:mm") :
+      moment(sun, ['h:m a', 'H:m']).add(sabahMinutes, "minutes").format("HH:mm")
+    ) : undefined;
 
-    })
+    var cuma: string | undefined = dhuhr.startsWith("13:") ? config.cumaSummer : config.cumaWinter;
+    if (cuma && cuma < dhuhr) cuma = undefined;
+    if (today.isoWeekday() !== 5) {
+      cuma = undefined;
+    }
+
+    return updatePrayerTimesData({
+      city: config.city,
+      date: Text.forMoment(today),
+      hijri: Text.forHijriDate(hijri),
+      specialDay: specialDay,
+      times: [
+        { name: Text.PrayerTimes.FAJR, time: fajr },
+        { name: Text.PrayerTimes.SUN, time: sun },
+        { name: Text.PrayerTimes.DHUHR, time: dhuhr },
+        { name: Text.PrayerTimes.ASR, time: asr },
+        { name: Text.PrayerTimes.MAGHRIB, time: maghrib },
+        { name: Text.PrayerTimes.ISHAA, time: ishaa }
+      ],
+      sabah: config.sabah ? { name: Text.PrayerTimes.SABAH, time: sabah } : undefined,
+      cuma: cuma ? { name: Text.PrayerTimes.CUMA, time: cuma } : undefined,
+      isRamadan: isRamadan
+    } as PrayerTimesData, config)
+
+  })
 
 }
