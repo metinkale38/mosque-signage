@@ -16,15 +16,11 @@ import org.metinkale.mosquesignage.utils.SystemUtils
 class StartOverlayReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         Log.e("StartOverlayReceiver", "onReceive")
-        if (App.enabled) {
+        if (App.autostart && Shell.supported) {
             if (isInternetAvailable(context)) {
                 if (!OverlayService.running) {
-                    App.active = true
-                    if (Shell.supported) {
-                        GlobalScope.launch { SystemUtils.startActivity() }
-                    } else {
-                        OverlayService.start(App.ctx)
-                    }
+                    App.running = true
+                    GlobalScope.launch { SystemUtils.startActivity() }
                 } else Log.e("StartOverlayReceiver", "already running")
             } else Log.e("StartOverlayReceiver", "no internet")
         } else Log.e("StartOverlayReceiver", "disabled")

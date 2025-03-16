@@ -1,8 +1,8 @@
 package org.metinkale.mosquesignage
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 
 class App : Application() {
@@ -22,24 +22,23 @@ class App : Application() {
 
         var config: String
             get() = prefs.getString("config", "")!!
-            @SuppressLint("ApplySharedPref")
             set(value) {
-                prefs.edit().putString("config", value).commit()
+                prefs.edit(commit = true) { putString("config", value) }
             }
-        var active: Boolean = true
 
-        var enabled: Boolean
-            get() = prefs.getBoolean("enabled", true)
-            @SuppressLint("ApplySharedPref")
+        var autostart: Boolean
+            get() = prefs.getBoolean("autostart", true)
             set(value) {
-                prefs.edit().putBoolean("enabled", value).commit()
+                prefs.edit(commit = true) { putBoolean("enabled", value) }
             }
+
+        var running: Boolean = true
 
         val remoteHost: String
             get() = config.takeIf { it.startsWith("http") }?.substringBefore("?")
                 ?: "https://metinkale38.github.io/mosque-signage"
 
-        val query: String get() = if (config.contains("?") == true) config.substringAfter("?") else "config=$config"
+        val query: String get() = if (config.contains("?")) config.substringAfter("?") else "config=$config"
 
     }
 

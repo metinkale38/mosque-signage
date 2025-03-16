@@ -8,7 +8,7 @@ import java.io.InputStreamReader
 
 object RootShell : Shell {
 
-    override suspend fun exec(cmd: String) {
+    override suspend fun exec(cmd: String): String? {
         try {
             Log.e("RootShell", ">>$cmd")
             val process = ProcessBuilder("/system/xbin/su", "-c", cmd)
@@ -26,9 +26,11 @@ object RootShell : Shell {
             val exitCode = process.waitFor()
 
             Log.e("RootShell", "<<($exitCode): $result")
+            return result.toString()
         } catch (e: Exception) {
             Log.e("RootShell", "Error executing command", e)
         }
+        return null
     }
 
     override val supported: Boolean by lazy {

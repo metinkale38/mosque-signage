@@ -9,12 +9,34 @@ plugins {
 
 android {
     namespace = "org.metinkale.mosquesignage"
-    compileSdk = 34
+    compileSdk = 35
+
+    flavorDimensions("default")
+    productFlavors {
+        create("github") {
+            dimension = "default"
+            applicationId = "org.metinkale.mosquesignage"
+            versionNameSuffix = "-github"
+            buildConfigField("String", "FLAVOR", "\"github\"")
+        }
+
+        create("playstore") {
+            dimension = "default"
+            applicationId = "org.metinkale.signage"
+            versionNameSuffix = "-playstore"
+            buildConfigField("String", "FLAVOR", "\"playstore\"")
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
 
     defaultConfig {
         applicationId = "org.metinkale.mosquesignage"
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 4
         versionName = "1.0"
         kotlinOptions {
@@ -75,6 +97,7 @@ dependencies {
     implementation(libs.androidx.tv.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.preference.ktx)
     implementation(libs.adblib)
     implementation(libs.nanohttpd)
     androidTestImplementation(platform(libs.androidx.compose.bom))

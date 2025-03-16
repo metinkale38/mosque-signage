@@ -23,19 +23,14 @@ import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.metinkale.mosquesignage.utils.BackgroundHelper
 import org.metinkale.mosquesignage.utils.SystemUtils
-import org.metinkale.mosquesignage.utils.WebServer
-import org.metinkale.mosquesignage.utils.sync
-import java.io.File
 import java.util.Calendar
-import kotlin.lazy
 
 
 class OverlayService : Service() {
     private lateinit var windowManager: WindowManager
     var signageView: View? = null
-    val www: File by lazy { File(filesDir, "www") }
-    val webServer: WebServer by lazy { WebServer(www) }
     val handler = Handler()
 
     private var wakeLock: PowerManager.WakeLock? = null
@@ -44,7 +39,9 @@ class OverlayService : Service() {
     override fun onCreate() {
         super.onCreate()
         Log.e("OverlayService", "onCreate")
-        App.enabled = true
+        App.autostart = true
+
+        BackgroundHelper.start{ restart(App.ctx) }
 
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -60,7 +57,7 @@ class OverlayService : Service() {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
         )
 
-        if (App.config.isEmpty() || !App.active ||
+        if (App.config.isEmpty() || !App.running ||
             (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this))
         ) {
             stopSelf()
@@ -69,9 +66,6 @@ class OverlayService : Service() {
         GlobalScope.launch { SystemUtils.startActivity() }
 
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        webServer.start()
-        syncAsync()
-
 
         val powerManager = getSystemService(POWER_SERVICE) as PowerManager
         wakeLock = powerManager.newWakeLock(
@@ -112,7 +106,7 @@ class OverlayService : Service() {
                 Log.e("OverlayService", "Pressed KeyCode: $keyCode")
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     stopSelf()
-                    App.active = false
+                    App.running = false
 
                     startActivity(Intent(this@OverlayService, MainActivity::class.java).also {
                         it.flags = FLAG_ACTIVITY_NEW_TASK
@@ -130,6 +124,8 @@ class OverlayService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         running = false
+        BackgroundHelper.stop()
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             stopForeground(STOP_FOREGROUND_REMOVE)
         }
@@ -137,10 +133,8 @@ class OverlayService : Service() {
         if (signageView != null) {
             windowManager.removeView(signageView)
         }
-        webServer.stop()
-        wakeLock?.takeIf { it.isHeld }?.release()
-        handler.removeCallbacks(syncAsync)
 
+        wakeLock?.takeIf { it.isHeld }?.release()
 
         Log.e("OverlayService", "set set alarm for restart")
         val restartIntent = Intent(applicationContext, StartOverlayReceiver::class.java)
@@ -169,16 +163,6 @@ class OverlayService : Service() {
         scheduleNextRestart()
     }
 
-    val syncAsync: () -> Unit = {
-        if (App.config.isNotEmpty()) {
-            GlobalScope.launch {
-                if (sync(App.remoteHost, www))
-                    restart(this@OverlayService)
-            }
-        }
-
-        handler.postDelayed(syncAsync, 1000 * 60 * 30)
-    }
 
     private fun scheduleNextRestart() {
         val calendar = Calendar.getInstance()

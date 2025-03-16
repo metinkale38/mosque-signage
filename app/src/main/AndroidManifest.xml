@@ -7,7 +7,10 @@
         android:required="false" />
     <uses-feature
         android:name="android.software.leanback"
-        android:required="false" />
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.type.television"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -19,12 +22,13 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:ignore="ProtectedPermissions"/>
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".App"
@@ -35,10 +39,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MosqueSignage"
         android:usesCleartextTraffic="true">
+        <activity android:name=".FallbackActivity" />
         <activity
-            android:launchMode="singleInstance"
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,9 +62,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        <service android:name=".OverlayService" android:foregroundServiceType="specialUse"/>
 
-        <receiver android:name=".StartOverlayReceiver" android:exported="true">
+        <service
+            android:name=".OverlayService"
+            android:foregroundServiceType="specialUse" />
+
+        <receiver
+            android:name=".StartOverlayReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
@@ -77,8 +87,6 @@
                 <action android:name="com.amazon.tv.action.HDMI_AUDIO_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-
-
     </application>
 
 </manifest>

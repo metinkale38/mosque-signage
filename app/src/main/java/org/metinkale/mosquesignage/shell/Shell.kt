@@ -1,16 +1,17 @@
 package org.metinkale.mosquesignage.shell
 
 sealed interface Shell {
-    suspend fun exec(cmd: String)
+    suspend fun exec(cmd: String): String?
 
     val supported: Boolean
 
     companion object : Shell {
-        private val activeShell =
-            listOf<Shell>(AdbShell, RootShell).firstOrNull { it.supported }
+        private val activeShell
+            get() =
+                listOf(AdbShell, RootShell).firstOrNull { it.supported }
 
-        override suspend fun exec(cmd: String): Unit = activeShell?.exec(cmd) ?: Unit
+        override suspend fun exec(cmd: String): String? = activeShell?.exec(cmd)
 
-        override val supported = activeShell != null
+        override val supported get() = activeShell != null
     }
 }
