@@ -41,7 +41,11 @@ const Configurator = () => {
 
 
     useEffect(() => {
-        fetchCities("https://prayertimes.dynv6.net/api", 0);
+        // Cors is only enabled for Github, other Servers have to proxy themselves
+        if (window.location.host === "metinkale38.github.io")
+            fetchCities("https://prayertimes.dynv6.net/api", 0);
+        else
+            fetchCities("/api", 0)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [/*Do not add fetchCities*/]);
 
@@ -59,7 +63,7 @@ const Configurator = () => {
 
 
     return (
-        <div className="p-6 max-w-3xl mx-auto bg-white shadow-md rounded-lg m-8 flex flex-col gap-2">
+        <div className="p-6  m-8  w-max mx-auto bg-white shadow-md rounded-lg flex flex-col gap-2">
             <h2 className="text-xl font-bold mb-4">Konfigurator</h2>
 
             <label className="block mb-1">Config (optional)</label>
