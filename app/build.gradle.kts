@@ -108,6 +108,7 @@ dependencies {
 tasks.register("generateReleaseInfo") {
     group = "build"
     description = "Generiert eine JSON-Datei mit Release-Informationen."
+    dependsOn("assembleGithubRelease")
 
     doLast {
         val outputApk = android.applicationVariants
@@ -128,8 +129,4 @@ tasks.register("generateReleaseInfo") {
         val outputJson = File(outputDir, "app-release.json")
         outputJson.writeText(jsonOutput)
     }
-}
-
-tasks.named("preBuild").configure {
-    finalizedBy("generateReleaseInfo")
 }
