@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { PrayerTimesData, determineScreenStatus, getPrayerTimesData, updatePrayerTimesData } from './PrayerTimesData';
 import { Default } from './config';
-import { ScreenControl } from './ScreenControl';
 import { LocalizedText } from '../LocalizedText';
 import "./PrayerTimes.css"
 import "./PrayerTimes.primary.css"
 import "./PrayerTimes.secondary.css"
 import "./PrayerTimes.highlight.css"
 import { second } from '../now';
+import { SystemUtils } from '../SystemControl';
 
 const PrayerTimes = ({ config = Default }) => {
   let [data, setData] = useState<PrayerTimesData>(new PrayerTimesData())
@@ -43,9 +43,9 @@ const PrayerTimes = ({ config = Default }) => {
         var screenState = determineScreenStatus(data)
         if (screenState !== screenOn) {
           if (screenState) {
-            ScreenControl.on();
+            SystemUtils.on();
           } else {
-            ScreenControl.off();
+            SystemUtils.off();
           }
           setScreenOn(screenState);
         }

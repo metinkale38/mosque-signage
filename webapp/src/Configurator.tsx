@@ -3,6 +3,7 @@ import { configs, Default, getConfig, toUrlParam } from "./prayertimes/config";
 import { Text } from "./LocalizedText";
 import countries from "i18n-iso-countries";
 import deLocale from "i18n-iso-countries/langs/de.json";
+import { SystemUtils } from "./SystemControl";
 
 const Configurator = () => {
     countries.registerLocale(deLocale);
@@ -49,6 +50,11 @@ const Configurator = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [/*Do not add fetchCities*/]);
 
+
+    useEffect(() => {
+        SystemUtils.setConfig(toUrlParam(config).substring(1))
+    }, [config])
+
     const handleSelectChange = (levelIndex: number, value: string) => {
         setRemoteCities((prev) => {
             const newLevels = prev.slice(0, levelIndex + 1);
@@ -62,6 +68,7 @@ const Configurator = () => {
 
 
 
+
     return (
         <div className="p-6  m-8  w-max mx-auto bg-white shadow-md rounded-lg flex flex-col gap-2">
             <h2 className="text-xl font-bold mb-4">Konfigurator</h2>
@@ -69,12 +76,13 @@ const Configurator = () => {
             <label className="block mb-1">Config (optional)</label>
             <select
                 name="config"
-                value={config.key}
-                onChange={(e) => setConfig(configs.find((c) => c.key === e.target.value) || Default)}
+                value={config.config}
+                tabIndex={1}
+                onChange={(e) => setConfig({ ...(configs.find((c) => c.config === e.target.value) || Default) })}
                 className="w-full p-2 border rounded mb-2">
                 <option value={undefined}>Default</option>
                 {configs.map((config) => (
-                    <option key={config.key} value={config.key}>{config.key}</option>
+                    <option key={config.config} value={config.config}>{config.config}</option>
                 ))}
             </select>
 
@@ -82,6 +90,7 @@ const Configurator = () => {
             <select
                 name="city"
                 value={config.city}
+                tabIndex={2}
                 onChange={(e) => { if (e.target.value in cities) setConfig({ ...config, city: e.target.value }) }}
                 className="w-full p-2 border rounded mb-2"            >
                 <option key={config.city} value={config.city}>{config.city}</option>
@@ -94,6 +103,7 @@ const Configurator = () => {
 
             {remoteCities.map((level, index) => (
                 <select
+                    tabIndex={3 + index}
                     key={index}
                     className="w-full p-2 border rounded mb-2"
                     onChange={(e) => handleSelectChange(index, e.target.value)}>
@@ -118,7 +128,7 @@ const Configurator = () => {
                 onChange={(e) => setConfig({ ...config, cumaSummer: e.target.value })}
                 className="w-full p-2 border rounded mb-2"
                 placeholder="HH:MM"
-                tabIndex={2}
+                tabIndex={10}
             />
 
             <label className="block mb-1">Abweichendes Freitagsgebet zur Winterzeit (z.B. 13:00)</label>
@@ -129,7 +139,7 @@ const Configurator = () => {
                 onChange={(e) => setConfig({ ...config, cumaWinter: e.target.value })}
                 className="w-full p-2 border rounded mb-2"
                 placeholder="HH:MM"
-                tabIndex={3}
+                tabIndex={11}
             />
 
             <label className="block mb-1">Morgengebet (-30: Halbe Stunde vor Sonnenaufgang, 15: 15min nach Fajr)</label>
@@ -140,7 +150,7 @@ const Configurator = () => {
                 onChange={(e) => setConfig({ ...config, sabah: parseInt(e.target.value) })}
                 className="w-full p-2 border rounded mb-2"
                 placeholder="Zahl eingeben"
-                tabIndex={4}
+                tabIndex={12}
             />
 
             <label className="block mb-1">Morgengebet Ramadan (-30: Halbe Stunde vor Sonnenaufgang, 15: 15min nach Fajr)</label>
@@ -151,7 +161,7 @@ const Configurator = () => {
                 onChange={(e) => setConfig({ ...config, sabahRamadan: parseInt(e.target.value) })}
                 className="w-full p-2 border rounded mb-2"
                 placeholder="Zahl eingeben"
-                tabIndex={5}
+                tabIndex={13}
             />
 
             <label className="flex items-center space-x-2">
@@ -160,7 +170,7 @@ const Configurator = () => {
                     checked={config.showHighlight}
 
                     onChange={(e) => setConfig({ ...config, showHighlight: e.target.checked })}
-                    tabIndex={6}
+                    tabIndex={14}
                 />
                 <span>Hervorhebung während der Gebetszeit</span>
             </label>
@@ -170,7 +180,7 @@ const Configurator = () => {
                     type="checkbox"
                     checked={config.showHighlightAlways}
                     onChange={(e) => setConfig({ ...config, showHighlightAlways: e.target.checked })}
-                    tabIndex={7}
+                    tabIndex={15}
                 />
                 <span>Hebe Gebetszeit immer vor</span>
             </label>
@@ -180,7 +190,7 @@ const Configurator = () => {
                     type="checkbox"
                     checked={config.showSpecialDays}
                     onChange={(e) => setConfig({ ...config, showSpecialDays: e.target.checked })}
-                    tabIndex={8}
+                    tabIndex={16}
                 />
                 <span>Zeige Religiöse Tage</span>
             </label>
@@ -194,7 +204,7 @@ const Configurator = () => {
                 onChange={(e) => setConfig({ ...config, bgColor: e.target.value })}
                 className="w-full p-2 border rounded mb-2"
                 type="color"
-                tabIndex={9}
+                tabIndex={17}
             />
 
             <label className="block mb-1">Stil</label>
@@ -203,7 +213,7 @@ const Configurator = () => {
                 value={config.style}
                 onChange={(e) => setConfig({ ...config, style: e.target.value })}
                 className="w-full p-2 border rounded mb-2"
-                tabIndex={10}
+                tabIndex={18}
             >
                 <option value="primary">Primary</option>
                 <option value="secondary">Secondary</option>
@@ -218,7 +228,7 @@ const Configurator = () => {
                             name={lang}
                             checked={config.languages.includes(lang)}
                             onChange={(e) => setConfig({ ...config, languages: e.target.checked ? [...config.languages, lang] : config.languages.filter((l) => l !== lang) })}
-                            tabIndex={11 + idx}
+                            tabIndex={19 + idx}
                         />
                         <span>{lang.toUpperCase()}</span>
                     </label>

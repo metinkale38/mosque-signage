@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import org.metinkale.mosquesignage.utils.SystemUtils
-import org.metinkale.mosquesignage.utils.askConfigDialog
 
 
 class MainActivity : AppCompatActivity() {
@@ -15,17 +14,14 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch { SystemUtils.init() }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        if (App.config.isEmpty()) {
-            askConfigDialog()
-        } else {
-            if (App.autostart) OverlayService.start(this)
-        }
+        if (App.autostart) OverlayService.start(this)
+    }
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(android.R.id.content, SettingsFragment())
-                .commit()
-        }
+    override fun onResume() {
+        super.onResume()
+        supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, SettingsFragment())
+            .commit()
     }
 }
 

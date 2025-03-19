@@ -3,20 +3,20 @@ package org.metinkale.mosquesignage
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity.MODE_PRIVATE
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreferenceCompat
-import org.metinkale.mosquesignage.utils.askConfigDialog
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.metinkale.mosquesignage.shell.Shell
 import org.metinkale.mosquesignage.utils.ManualAPKUpdater
 import org.metinkale.mosquesignage.utils.SystemUtils
+import java.net.URLDecoder
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -41,14 +41,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         preferenceScreen.addPreference(Preference(requireContext()).apply {
             title = "Config"
+            setSummaryProvider { URLDecoder.decode(App.config) }
             setOnPreferenceClickListener {
-                requireActivity().askConfigDialog()
+                startActivity(Intent(requireContext(), AdvancedConfig::class.java))
+                true
+            }
+        })
+
+
+        preferenceScreen.addPreference(EditTextPreference(requireContext()).apply {
+            key = "host"
+            title = "Host"
+            setSummaryProvider { App.host }
+            setDefaultValue(App.host)
+
+            setOnPreferenceChangeListener { preference, newValue ->
+                App.host = newValue.toString()
                 true
             }
         })
 
         preferenceScreen.addPreference(ListPreference(requireContext()).apply {
-            key="rotate"
+            key = "rotate"
             title = "Rotate"
             entries = listOf("Normal", "90°", "180°", "270°").toTypedArray()
             entryValues = listOf("0", "90", "180", "270").toTypedArray()

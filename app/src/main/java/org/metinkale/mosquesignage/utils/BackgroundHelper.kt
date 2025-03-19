@@ -20,7 +20,7 @@ object BackgroundHelper {
         syncAsync = Runnable {
             if (App.config.isNotEmpty()) {
                 GlobalScope.launch {
-                    if (sync(App.remoteHost, www))
+                    if (sync(App.host, www))
                         restartAfterUpdate()
                 }
             }

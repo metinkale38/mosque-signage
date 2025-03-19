@@ -41,7 +41,7 @@ class OverlayService : Service() {
         Log.e("OverlayService", "onCreate")
         App.autostart = true
 
-        BackgroundHelper.start{ restart(App.ctx) }
+        BackgroundHelper.start { restart(App.ctx) }
 
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -57,8 +57,9 @@ class OverlayService : Service() {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
         )
 
-        if (App.config.isEmpty() || !App.running ||
-            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this))
+        if (!App.running || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(
+                this
+            ))
         ) {
             stopSelf()
             return
@@ -136,7 +137,7 @@ class OverlayService : Service() {
 
         wakeLock?.takeIf { it.isHeld }?.release()
 
-        Log.e("OverlayService", "set set alarm for restart")
+        Log.e("OverlayService", "set alarm for restart")
         val restartIntent = Intent(applicationContext, StartOverlayReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,

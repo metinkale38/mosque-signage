@@ -39,6 +39,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MosqueSignage"
         android:usesCleartextTraffic="true">
+        <activity android:name=".AdvancedConfig" />
         <activity android:name=".FallbackActivity" />
         <activity
             android:name=".MainActivity"
