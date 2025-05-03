@@ -17,16 +17,34 @@ function PhotoCarousel() {
     const scrollContainer = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        const interval = setInterval(() => {
+        let animationFrameId: number;
+        let lastTimestamp: number | null = null;
+        const speed = 33.33; // 1px alle 30ms
+
+        const scrollStep = (timestamp: number) => {
+            if (lastTimestamp === null) lastTimestamp = timestamp;
+            const deltaTime = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+
+            const distance = speed * deltaTime;
+
             if (scrollContainer.current != null) {
-                if (scrollContainer.current.scrollLeft >= scrollContainer.current.scrollWidth / 3) {
-                    scrollContainer.current.scrollTo({ left: 0 });
-                } else {
-                    scrollContainer.current.scrollBy({ left: 1 });
+                const { scrollLeft, scrollWidth } = scrollContainer.current;
+
+                scrollContainer.current.scrollLeft += distance;
+
+                // Endlos-Effekt durch Zurücksetzen auf halbe Strecke
+                if (scrollLeft >= scrollWidth / 2) {
+                    scrollContainer.current.scrollLeft -= scrollWidth / 2;
                 }
             }
-        }, 30);
-        return () => clearInterval(interval);
+
+            animationFrameId = requestAnimationFrame(scrollStep);
+        };
+
+        animationFrameId = requestAnimationFrame(scrollStep);
+
+        return () => cancelAnimationFrame(animationFrameId);
     }, [scrollContainer]);
 
 
