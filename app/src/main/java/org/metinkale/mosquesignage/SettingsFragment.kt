@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 import org.metinkale.mosquesignage.shell.Shell
 import org.metinkale.mosquesignage.utils.ManualAPKUpdater
 import org.metinkale.mosquesignage.utils.SystemUtils
-import java.net.URLDecoder
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -41,7 +40,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         preferenceScreen.addPreference(Preference(requireContext()).apply {
             title = "Config"
-            setSummaryProvider { URLDecoder.decode(App.config) }
+            setSummaryProvider { App.config }
             setOnPreferenceClickListener {
                 startActivity(Intent(requireContext(), AdvancedConfig::class.java))
                 true
@@ -49,17 +48,39 @@ class SettingsFragment : PreferenceFragmentCompat() {
         })
 
 
-        preferenceScreen.addPreference(EditTextPreference(requireContext()).apply {
-            key = "host"
-            title = "Host"
-            setSummaryProvider { App.host }
-            setDefaultValue(App.host)
+        if (BuildConfig.FLAVOR == "github") {
+            // PlayStore can only use default host (Github static pages)
+            preferenceScreen.addPreference(EditTextPreference(requireContext()).apply {
+                key = "host"
+                title = "Host"
+                setSummaryProvider { App.host }
+                setDefaultValue(App.host)
 
-            setOnPreferenceChangeListener { preference, newValue ->
-                App.host = newValue.toString()
-                true
-            }
-        })
+                setOnPreferenceChangeListener { preference, newValue ->
+                    App.host = newValue.toString()
+                    true
+                }
+            })
+        }
+
+
+        if (!App.host.contains("github.io")) {
+            // Dashboard only available with self hosted hosts
+            preferenceScreen.addPreference(ListPreference(requireContext()).apply {
+                key = "page"
+                title = "Page"
+                setSummaryProvider { App.page }
+                setDefaultValue(App.page)
+
+                entries = arrayOf("Prayertimes", "Dashboard")
+                entryValues = arrayOf("prayertimes", "dashboard")
+
+                setOnPreferenceChangeListener { preference, newValue ->
+                    App.page = newValue.toString()
+                    true
+                }
+            })
+        }
 
         preferenceScreen.addPreference(ListPreference(requireContext()).apply {
             key = "rotate"

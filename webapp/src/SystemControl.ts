@@ -29,5 +29,15 @@ export let SystemUtils = {
                 systemUtils.setConfig(config);
             }
         } catch (e) { console.log(e) }
+    },
+
+    getFlavor(): string | undefined {
+        try {
+            let systemUtils = (window.top as any).systemUtils
+            if (systemUtils) {
+                return systemUtils.getFlavour();
+            }
+        } catch (e) { console.log(e) }
+        return undefined;
     }
 }

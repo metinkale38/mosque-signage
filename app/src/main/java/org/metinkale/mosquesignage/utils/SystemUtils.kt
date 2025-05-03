@@ -5,6 +5,7 @@ import android.webkit.JavascriptInterface
 import androidx.core.content.edit
 import kotlinx.coroutines.runBlocking
 import org.metinkale.mosquesignage.App
+import org.metinkale.mosquesignage.BuildConfig
 import org.metinkale.mosquesignage.shell.RootShell
 import org.metinkale.mosquesignage.shell.Shell
 
@@ -28,6 +29,11 @@ object SystemUtils {
     fun setConfig(config: String) {
         Log.e("System", "setConfig=$config")
         App.config = config
+    }
+
+    @JavascriptInterface
+    fun getFlavor(): String {
+        return BuildConfig.FLAVOR
     }
 
 

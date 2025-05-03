@@ -30,65 +30,22 @@ export const Default: Config = {
    showSpecialDays: true,
    bgColor: "#0069a8",
    style: "primary",
-   languages: ["de", "tr"]
+   languages: ["de", "tr"],
 };
 
-export function getConfig(): Config {
-   var selectedConfig = { ...Default };
-   for (let config of configs) {
-      if (window.location.search === "?" + config.config
-         || urlParams.get("config") === config.config
-      ) {
-         selectedConfig = { ...config };
-      }
-   }
-
-   urlParams.forEach((value, key) => {
-      if (key === "languages")
-         (selectedConfig as any)[key] = value.split(";");
-      else
-         (selectedConfig as any)[key] = value;
-   })
-   return selectedConfig;
-}
-
-export function toUrlParam(config: Config): string {
-   const urlParams: string[] = [];
-
-   var initial = { ...Default };
-   for (let c of configs) {
-      if (c.config === config.config) {
-         initial = { ...c };
-      }
-   }
-
-   for (const key in config) {
-      if (config.hasOwnProperty(key) && key !== "page") {
-         const value = (config as any)[key];
-         const defaultValue = (initial as any)[key];
-
-         if (Array.isArray(value)) value.sort();
-         if (Array.isArray(defaultValue)) defaultValue.sort();
-
-
-         if (JSON.stringify(value) !== JSON.stringify(defaultValue) || (key === "config" && value !== "default")) {
-            if (value) {
-               if (key === "languages")
-                  urlParams.push(`languages=${value.join(";")}`);
-               else
-                  urlParams.push(`${key}=${encodeURIComponent(value)}`);
-            }
-         }
-      }
-   }
-
-   return urlParams.length > 0 ? `?${urlParams.join('&')}` : '';
-}
 
 export const configs: Config[] = [
    {
       ...Default,
-      config: "braunschweig",
+      config: "braunschweig", // delete
+      screenOnOff: true,
+      cumaSummer: "14:30",
+      cumaWinter: "12:30",
+      sabah: -30,
+      sabahRamadan: 15
+   }, {
+      ...Default,
+      config: "igmgbs",
       screenOnOff: true,
       cumaSummer: "14:30",
       cumaWinter: "12:30",
@@ -144,3 +101,55 @@ export const configs: Config[] = [
    }
 ];
 
+
+export function getConfig(): Config {
+   var selectedConfig = { ...Default };
+   for (let config of configs) {
+      if (window.location.search === "?" + config.config
+         || urlParams.get("config") === config.config
+      ) {
+         selectedConfig = { ...config };
+      }
+   }
+
+   urlParams.forEach((value, key) => {
+      if (key === "languages")
+         (selectedConfig as any)[key] = value.split(";");
+      else
+         (selectedConfig as any)[key] = value;
+   })
+   return selectedConfig;
+}
+
+export function toUrlParam(config: Config): string {
+   const urlParams: string[] = [];
+
+   var initial = { ...Default };
+   for (let c of configs) {
+      if (c.config === config.config) {
+         initial = { ...c };
+      }
+   }
+
+   for (const key in config) {
+      if (config.hasOwnProperty(key) && key !== "page") {
+         const value = (config as any)[key];
+         const defaultValue = (initial as any)[key];
+
+         if (Array.isArray(value)) value.sort();
+         if (Array.isArray(defaultValue)) defaultValue.sort();
+
+
+         if (JSON.stringify(value) !== JSON.stringify(defaultValue) || (key === "config" && value !== "default")) {
+            if (value) {
+               if (key === "languages")
+                  urlParams.push(`languages=${value.join(";")}`);
+               else
+                  urlParams.push(`${key}=${encodeURIComponent(value)}`);
+            }
+         }
+      }
+   }
+
+   return urlParams.length > 0 ? `?${urlParams.join('&')}` : '';
+}

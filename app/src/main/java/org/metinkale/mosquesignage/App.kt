@@ -37,6 +37,10 @@ class App : Application() {
             get() = prefs.getString("host", "https://metinkale38.github.io/mosque-signage/")!!
             set(value) = prefs.edit(commit = true) { putString("host", value) }
 
+        var page: String?
+            get() = prefs.getString("page", null)
+            set(value) = prefs.edit(commit = true) { putString("page", value) }
+
     }
 
 }
