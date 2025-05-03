@@ -128,7 +128,9 @@ export function determineScreenStatus(data: PrayerTimesData): boolean {
   switch (data.selectionIdx) {
     case -1/*Isha*/: return false;
     case 0/*Fajr*/: return true;
-    case 1/*    */: return left < hour || passed < hour;
+    case 1/*    */:
+      if (data.specialDay == Text.HijriDays.EID_AL_ADHA_DAY1 || data.specialDay == Text.HijriDays.EID_AL_FITR_DAY1) return true
+      else return left < hour || passed < hour;
     case 2/*Dhuhr*/: return true;
     case 3/*Asr*/: return true;
     case 4/*Maghrib*/: return true;
