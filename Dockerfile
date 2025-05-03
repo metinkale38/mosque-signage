@@ -7,7 +7,7 @@ RUN apk add --no-cache nodejs npm
 WORKDIR /mosque-signage
 
 # Kopiere die Gradle-Konfigurationen für verbessertes Caching
-COPY gradlew build.gradle.kts settings.gradle.kts gradle.properties ./
+COPY gradlew settings.gradle.kts gradle.properties ./
 COPY gradle/ gradle/
 
 # Setze Ausführungsrechte und lade die Abhängigkeiten
