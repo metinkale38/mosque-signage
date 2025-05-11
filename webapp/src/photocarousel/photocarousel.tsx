@@ -5,6 +5,9 @@ import { useEffect, useState, useRef } from "react";
 function PhotoCarousel() {
 
     let [images, setImages] = useState<Array<string>>([])
+    let [currentScroll, setCurrentScroll] = useState<number>(0)
+
+    const scrollContainer = useRef<HTMLDivElement>(null)
 
     function reload() { fetch("images.php").then(response => response.text()).then(text => setImages(text.split("\n"))) }
     useEffect(() => {
@@ -13,13 +16,17 @@ function PhotoCarousel() {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        if (scrollContainer.current != null) {
+            scrollContainer.current.style.transform = `translateX(-${currentScroll}px)`;
+        }
+    }, [currentScroll]);
 
-    const scrollContainer = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         let animationFrameId: number;
         let lastTimestamp: number | null = null;
-        const speed = 33.33; // 1px alle 30ms
+        const speed = 85;
 
         const scrollStep = (timestamp: number) => {
             if (lastTimestamp === null) lastTimestamp = timestamp;
@@ -29,13 +36,12 @@ function PhotoCarousel() {
             const distance = speed * deltaTime;
 
             if (scrollContainer.current != null) {
-                const { scrollLeft, scrollWidth } = scrollContainer.current;
+                const { scrollWidth } = scrollContainer.current;
 
-                scrollContainer.current.scrollLeft += distance;
+                setCurrentScroll(currentScroll + distance);
 
-                // Endlos-Effekt durch Zurücksetzen auf halbe Strecke
-                if (scrollLeft >= scrollWidth / 2) {
-                    scrollContainer.current.scrollLeft -= scrollWidth / 2;
+                if (currentScroll >= scrollWidth / 2) {
+                    setCurrentScroll(currentScroll - scrollWidth / 2);
                 }
             }
 
@@ -45,12 +51,12 @@ function PhotoCarousel() {
         animationFrameId = requestAnimationFrame(scrollStep);
 
         return () => cancelAnimationFrame(animationFrameId);
-    }, [scrollContainer]);
+    }, [scrollContainer, currentScroll]);
 
 
-    return (<div ref={scrollContainer} className="w-full h-full flex overflow-auto scrollbar-hide will-change-scroll" >
+    return (<div ref={scrollContainer} className="w-full h-full flex scrollbar-hide will-change-transform" >
         {
-            [...images, ...images, ...images].map((img, idx) => (
+            [...images, ...images].map((img, idx) => (
                 <img alt="" key={"idx" + idx} src={img} className="max-h-[100%] my-6 mr-6 shadow border border-black rounded-xl " />
             ))
         }
