@@ -26,7 +26,7 @@ function PhotoCarousel() {
     useEffect(() => {
         let animationFrameId: number;
         let lastTimestamp: number | null = null;
-        const speed = 85;
+        const speed = 65;
 
         const scrollStep = (timestamp: number) => {
             if (lastTimestamp === null) lastTimestamp = timestamp;
