@@ -25,7 +25,10 @@ object BackgroundHelper {
                 }
             }
 
-            handler.postDelayed(syncAsync, 1000 * 60 * 30)
+            handler.postDelayed(
+                syncAsync,
+                if (App.page == "dashboard") 1000 * 60 * 5 else 1000 * 60 * 30
+            )
         }
 
     }

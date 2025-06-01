@@ -58,6 +58,7 @@ function PhotoCarousel() {
         {
             [...images, ...images].map((img, idx) => (
                 <img alt="" key={"idx" + idx} src={img} className="max-h-[100%] my-6 mr-6 shadow border border-black rounded-xl " />
+
             ))
         }
     </div>

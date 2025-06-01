@@ -10,6 +10,7 @@ services:
     volumes:
       - ${VIDEO_PATH}:/var/www/html/videos
       - ${PHOTO_PATH}:/var/www/html/images
+      - ${FULLSCREEN_PATH}:/var/www/html/fullscreen
     expose:
       - "80"
     restart: always

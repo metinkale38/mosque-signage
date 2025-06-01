@@ -98,7 +98,7 @@ export async function updatePrayerTimesData(data: PrayerTimesData, config: Confi
           if (data.isRamadan) {
             if (passed <= 70) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.TARAWIH };
           } else {
-            if (passed <= 20) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA };
+            if (passed <= 25) highlight = { time: data.times[5].time, name: Text.CurrentPrayerTime.ISHAA };
           }
           break;
       }

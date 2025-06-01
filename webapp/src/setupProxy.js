@@ -12,7 +12,7 @@ module.exports = function (app) {
 
 
     app.use((req, res, next) => {
-        if (req.path.startsWith('/videos') || req.path.startsWith('/images')) {
+        if (req.path.startsWith('/videos') || req.path.startsWith('/images')|| req.path.startsWith('/fullscreen')) {
             createProxyMiddleware({
                 target: 'https://signage.igmg-bs.de',
                 changeOrigin: true
