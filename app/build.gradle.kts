@@ -36,7 +36,7 @@ android {
         applicationId = "org.metinkale.mosquesignage"
         minSdk = 21
         targetSdk = 36
-        versionCode = 7
+        versionCode = 8
         versionName = "1.0"
         kotlinOptions {
             freeCompilerArgs += "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi"

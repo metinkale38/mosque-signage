@@ -4,9 +4,9 @@ module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'https://prayertimes.dynv6.net',
+            target: 'https://opt.mk38.dev',
             changeOrigin: true,
-            pathRewrite: { '^/api': '/api' }
+            pathRewrite: { '^/api': '' }
         })
     );
 
