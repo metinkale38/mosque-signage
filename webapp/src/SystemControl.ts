@@ -35,7 +35,7 @@ export let SystemUtils = {
         try {
             let systemUtils = (window.top as any).systemUtils
             if (systemUtils) {
-                return systemUtils.getFlavour();
+                return systemUtils.getFlavor();
             }
         } catch (e) { console.log(e) }
         return undefined;

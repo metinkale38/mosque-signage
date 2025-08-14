@@ -36,11 +36,20 @@ class WebServer(val www: File) : NanoHTTPD("127.0.0.1", 8080) {
 
             connection.requestMethod = session.method.name
             session.headers.forEach { (key, value) ->
-                connection.setRequestProperty(key, value)
+                if (key != "host")
+                    connection.setRequestProperty(key, value)
             }
 
             val responseCode = connection.responseCode
-            val responseStream: InputStream = connection.inputStream
+            val responseStream: InputStream = if (responseCode in 200..299) {
+                connection.inputStream
+            } else {
+                throw RuntimeException(
+                    "${connection.requestMethod} $targetUrl failed with response code: $responseCode: " + String(
+                        connection.errorStream.readBytes()
+                    )
+                )
+            }
 
             return newFixedLengthResponse(
                 Response.Status.lookup(responseCode),
@@ -51,7 +60,11 @@ class WebServer(val www: File) : NanoHTTPD("127.0.0.1", 8080) {
 
         } catch (e: Exception) {
             e.printStackTrace()
-            return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "Proxy Error")
+            return newFixedLengthResponse(
+                Response.Status.INTERNAL_ERROR,
+                MIME_PLAINTEXT,
+                "Proxy Error"
+            )
         }
     }
 }

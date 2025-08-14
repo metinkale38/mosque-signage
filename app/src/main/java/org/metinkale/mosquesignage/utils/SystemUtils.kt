@@ -33,6 +33,7 @@ object SystemUtils {
 
     @JavascriptInterface
     fun getFlavor(): String {
+        Log.e("System", "getFlavor=${BuildConfig.FLAVOR}")
         return BuildConfig.FLAVOR
     }
 
