@@ -9,6 +9,7 @@ import java.net.URL
 import java.security.MessageDigest
 import java.util.Locale
 
+private val RELOAD_FILE_EXT = listOf("html", "js", "css")
 suspend fun sync(remote: String, www: File): Boolean = runCatching {
     var reloadNeeded = false
 
@@ -23,7 +24,7 @@ suspend fun sync(remote: String, www: File): Boolean = runCatching {
             localPath.parentFile?.mkdirs()
             downloadFile("$remote$file", localPath)
 
-            if (file == "/index.html") {
+            if (RELOAD_FILE_EXT.contains(file.substringAfterLast("."))) {
                 reloadNeeded = true
             }
         } else {
@@ -36,7 +37,7 @@ suspend fun sync(remote: String, www: File): Boolean = runCatching {
                 localPath.delete()
                 tempPath.renameTo(localPath)
 
-                if (file == "/index.html") {
+                if (RELOAD_FILE_EXT.contains(file.substringAfterLast("."))) {
                     reloadNeeded = true
                 }
             }

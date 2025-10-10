@@ -14,11 +14,17 @@ class WebServer(val www: File) : NanoHTTPD("0.0.0.0", 8080) {
         if (session.uri.startsWith("/api")) {
             return handleProxyRequest(session)
         }
+        if (session.uri.equals("/on")) {
+            SystemUtils.on()
+            return newFixedLengthResponse(Response.Status.OK, "text/plain", "OK")
+        } else if (session.uri.equals("/off")) {
+            SystemUtils.off()
+            return newFixedLengthResponse(Response.Status.OK, "text/plain", "OK")
+        }
 
         val file = File(www, if (session.uri.equals("/")) "index.html" else session.uri)
-        if (file.equals("/on")) SystemUtils.on()
-        else if (file.equals("/off")) SystemUtils.on()
-        else if (file.exists()) {
+
+        if (file.exists()) {
             Log.e("WebServer", file.absolutePath)
             return newFixedLengthResponse(
                 Response.Status.OK,

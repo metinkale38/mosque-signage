@@ -19,7 +19,7 @@ const Fullscreen: React.FC<(FullscreenProps)> = ({ assets }) => {
         const interval = setInterval(() => {
             if (isImg(assets[idx]))
                 setIdx((idx + 1) % assets.length)
-        }, 5 * 1000);
+        }, 10 * 1000);
         return () => clearInterval(interval);
     }, [idx, assets]);
 
