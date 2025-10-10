@@ -7,7 +7,7 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-class WebServer(val www: File) : NanoHTTPD("127.0.0.1", 8080) {
+class WebServer(val www: File) : NanoHTTPD("0.0.0.0", 8080) {
 
 
     override fun serve(session: IHTTPSession): Response {
@@ -16,7 +16,9 @@ class WebServer(val www: File) : NanoHTTPD("127.0.0.1", 8080) {
         }
 
         val file = File(www, if (session.uri.equals("/")) "index.html" else session.uri)
-        if (file.exists()) {
+        if (file.equals("/on")) SystemUtils.on()
+        else if (file.equals("/off")) SystemUtils.on()
+        else if (file.exists()) {
             Log.e("WebServer", file.absolutePath)
             return newFixedLengthResponse(
                 Response.Status.OK,
