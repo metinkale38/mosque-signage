@@ -12,10 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set version
+
+      - name: Extract version from build.gradle.kts
         id: extract_version
         run: |
-          echo "VERSION=latest" >> $GITHUB_ENV
+          VERSION=$(grep 'versionName *= *"' app/build.gradle.kts | sed -E 's/.*versionName *= *"([^"]+)".*/\1/')
+          echo "VERSION=$VERSION-SNAPSHOT" >> $GITHUB_ENV
 
       - name: Build the Docker image
         run: docker build . --tag ghcr.io/metinkale38/mosque-signage:${VERSION}

@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.graphics.PixelFormat
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -33,7 +34,8 @@ class OverlayService : Service() {
     var signageView: View? = null
     val handler = Handler()
 
-    private var wakeLock: PowerManager.WakeLock? = null
+    private lateinit var cpuWakeLock: PowerManager.WakeLock
+    private lateinit var wifiWakeLock: WifiManager.WifiLock
 
 
     override fun onCreate() {
@@ -69,10 +71,18 @@ class OverlayService : Service() {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
 
         val powerManager = getSystemService(POWER_SERVICE) as PowerManager
-        wakeLock = powerManager.newWakeLock(
-            PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ON_AFTER_RELEASE,
-            "MyApp:WakeLockTag1"
+        cpuWakeLock = powerManager.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "MyApp:CPUWakeLock"
         )
+        cpuWakeLock.acquire()
+
+        val wifiManager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
+        wifiWakeLock = wifiManager.createWifiLock(
+            WifiManager.WIFI_MODE_FULL_HIGH_PERF,
+            "MyApp:WifiWakeLock"
+        )
+        wifiWakeLock.acquire()
 
 
         val layoutParams = WindowManager.LayoutParams(
@@ -135,7 +145,8 @@ class OverlayService : Service() {
             windowManager.removeView(signageView)
         }
 
-        wakeLock?.takeIf { it.isHeld }?.release()
+        if (this::cpuWakeLock.isInitialized && cpuWakeLock.isHeld) cpuWakeLock.release()
+        if (this::wifiWakeLock.isInitialized && wifiWakeLock.isHeld) wifiWakeLock.release()
 
         Log.e("OverlayService", "set alarm for restart")
         val restartIntent = Intent(applicationContext, StartOverlayReceiver::class.java)
