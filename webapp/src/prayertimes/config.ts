@@ -42,7 +42,7 @@ export const configs: Config[] = [
       cumaSummer: "14:30",
       cumaWinter: "12:30",
       sabah: -30,
-      sabahRamadan: 15
+      sabahRamadan: 30
    }, {
       ...Default,
       config: "igmgbs",
