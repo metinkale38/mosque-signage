@@ -1,3 +1,0 @@
-#!/bin/bash
-killall /usr/lib/chromium-browser/chromium-browser-v7
-rm -rf /home/pi/.cache/chromium/

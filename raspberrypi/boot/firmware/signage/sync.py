@@ -5,24 +5,24 @@ import requests
 import pathlib
 import hashlib
 
-root = "/boot/www"
+root = "/boot/firmware/signage/www"
 remote = "https://metinkale38.github.io/mosque-signage"
 
-if os.path.isfile("/boot/signage_host"):
-    with open("/boot/signage_host", 'r') as file:
+if os.path.isfile("/boot/firmware/signage/host"):
+    with open("/boot/firmware/signage/host", 'r') as file:
         remote = file.read().rstrip()
 
 mounted = False
 def mountrw():
     global mounted
     if mounted == False:
-        os.system('mount -o remount,rw /boot')
+        os.system('mount -o remount,rw /boot/firmware')
         mounted = True
 
 def mountro():
     global mounted
     if mounted:
-      os.system('mount -o remount,ro /boot')
+      os.system('mount -o remount,ro /boot/firmware')
 
 
 
@@ -30,12 +30,12 @@ host = os.uname()[1]
 lines = requests.get(remote + '/hash.php?hostname='+host).text.splitlines()
 
 remotefiles = {}
-indexchanged = False
 
 for line in lines:
     parts = line.split("=")
     remotefiles[parts[0]] = parts[1]
 
+changed = False
 for file, hash in remotefiles.items():
     localPath = root+file
     if os.path.isfile(localPath) == False:
@@ -43,6 +43,7 @@ for file, hash in remotefiles.items():
         mountrw()
         pathlib.Path(localPath).parent.mkdir(parents=True, exist_ok=True)
         urllib.request.urlretrieve(remote + file, localPath)
+        changed = True
     else:
         hex = hashlib.md5(open(localPath,"rb").read()).hexdigest()
         if hex != remotefiles[file]:
@@ -52,8 +53,9 @@ for file, hash in remotefiles.items():
             urllib.request.urlretrieve(remote + file, localPath+".tmp")
             os.remove(localPath)
             os.rename(localPath+".tmp", localPath)
-            if file == "/index.html":
-                os.system("/home/pi/scripts/reload_fullpageos_txt")
+            changed = True
+
+
 
 for subdir, dirs, files in os.walk(root):
     for file in files:
@@ -62,6 +64,10 @@ for subdir, dirs, files in os.walk(root):
            print("File "+path+" was removed")
            mountrw()
            os.remove(root + path)
+           changed = True
 
 
 mountro()
+
+if changed:
+    os.system("killall chromium")

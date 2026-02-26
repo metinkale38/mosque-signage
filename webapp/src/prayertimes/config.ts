@@ -35,22 +35,14 @@ export const Default: Config = {
 
 
 export const configs: Config[] = [
-   {
-      ...Default,
-      config: "braunschweig", // delete
-      screenOnOff: true,
-      cumaSummer: "14:30",
-      cumaWinter: "12:30",
-      sabah: -30,
-      sabahRamadan: 30
-   }, {
+{
       ...Default,
       config: "igmgbs",
       screenOnOff: true,
       cumaSummer: "14:30",
       cumaWinter: "12:30",
       sabah: -30,
-      sabahRamadan: 15
+      sabahRamadan: 30
    },
    {
       ...Default,

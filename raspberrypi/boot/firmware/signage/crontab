@@ -1,0 +1,4 @@
+@reboot         crontab /boot/firmware/signage/crontab
+@reboot         python /boot/firmware/signage/server.py
+*/5 * * * *     python /boot/firmware/signage/sync.py
+#0    3 * * *   reboot
