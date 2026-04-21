@@ -25,8 +25,6 @@ tasks.register("npmBuildStatic") {
 
     doLast {
         val buildDir = project.layout.buildDirectory.asFile.get()
-        File(buildDir, "hash.php").delete()
-
         File(buildDir, "hash.php").writeText(
             project.layout.buildDirectory.asFileTree.map {
                 "/" + it.toRelativeString(buildDir).replace("\\", "/") + "=" + it.md5Digest()
