@@ -113,6 +113,36 @@ export function getConfig(): Config {
    return selectedConfig;
 }
 
+export function fromUrlParam(search: string): Config {
+  const params = new URLSearchParams(search);
+  const config = { ...Default };
+
+  const configName = params.get("config");
+  if (configName) {
+    const baseConfig = configs.find((c) => c.config === configName);
+    if (baseConfig) {
+      Object.assign(config, baseConfig);
+    }
+  }
+
+  params.forEach((value, key) => {
+    if (key === "page") return;
+
+    if (key === "languages") {
+      config.languages = value.split(";");
+    } else if (value === "true" || value === "false") {
+      (config as any)[key] = value === "true";
+    } else if (!isNaN(Number(value)) && value.trim() !== "" && key !== "city" && key !== "bgColor") {
+      // Wandelt Zahlen um (außer Stadt-Pfad oder Hex-Farben)
+      (config as any)[key] = Number(value);
+    } else {
+      (config as any)[key] = value;
+    }
+  });
+
+  return config;
+}
+
 export function toUrlParam(config: Config): string {
    const urlParams: string[] = [];
 

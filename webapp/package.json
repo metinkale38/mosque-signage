@@ -27,6 +27,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
+    "postbuild": "node generate-filelist.cjs",
     "test": "npx playwright install chromium && npx playwright test",
     "update-snapshots": "npx playwright install chromium && npx playwright test --update-snapshots"
   },
@@ -50,6 +51,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.50.1",
+    "@types/web-bluetooth": "^0.0.21",
     "http-proxy-middleware": "^3.0.3",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^13.0.1",

@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import PrayerTimes from './prayertimes/PrayerTimes';
 import { getConfig } from './prayertimes/config';
-import Dashboard from './dashboard/Dashboard';
 import { urlParams } from './params';
 import Configurator from './Configurator';
 
@@ -40,13 +39,8 @@ function Router() {
     case "180": return rotate("rotate-180", urlParams)
   }
 
-  var selectedConfig = getConfig()
-
-  if (urlParams.get("page") === "dashboard") {
-    return (<Dashboard />)
-  } else {
-    return (<PrayerTimes config={selectedConfig} />)
-  }
+  let selectedConfig = getConfig();
+  return <PrayerTimes config={selectedConfig} />;
 }
 
 

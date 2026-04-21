@@ -25,8 +25,6 @@ tasks.register("npmBuildStatic") {
 
     doLast {
         val buildDir = project.layout.buildDirectory.asFile.get()
-        File(buildDir, "videos.php").delete()
-        File(buildDir, "images.php").delete()
         File(buildDir, "hash.php").delete()
 
         File(buildDir, "hash.php").writeText(
