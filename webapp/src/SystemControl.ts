@@ -3,12 +3,13 @@
 export let SystemUtils = {
 
     on(): void {
+      try{
         let systemUtils = (window.top as any).systemUtils
         if (systemUtils) {
             systemUtils.on();
         } else {
             fetch("http://localhost:8000/on").then(() => { }).catch(res => console.log(res));
-        }
+        }}catch(e){}
 
     },
     off(): void {
@@ -19,7 +20,7 @@ export let SystemUtils = {
             } else {
                 fetch("http://localhost:8000/off").then(() => { }).catch(res => console.log(res));
             }
-        } catch (e) { console.log(e) }
+        } catch (e) {}
     },
 
     setConfig(config: string): void {
@@ -28,7 +29,7 @@ export let SystemUtils = {
             if (systemUtils) {
                 systemUtils.setConfig(config);
             }
-        } catch (e) { console.log(e) }
+        } catch (e) {}
     },
 
     getFlavor(): string | undefined {
@@ -37,7 +38,7 @@ export let SystemUtils = {
             if (systemUtils) {
                 return systemUtils.getFlavor();
             }
-        } catch (e) { console.log(e) }
+        } catch (e) {}
         return undefined;
     }
 }

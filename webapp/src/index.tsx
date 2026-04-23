@@ -31,7 +31,7 @@ function rotate(rotate: "rotate-90" | "-rotate-90" | "rotate-180", params: URLSe
 
 function Router() {
 
-  if (urlParams.get("page") === "config") return Configurator()
+  if (urlParams.get("page") === "config" || window.parent.location.pathname.includes("/pi-signage/")) return Configurator()
 
   switch (urlParams.get("rotate")) {
     case "90": return rotate("rotate-90", urlParams)
