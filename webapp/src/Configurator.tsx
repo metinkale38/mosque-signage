@@ -17,7 +17,7 @@ const Configurator = () => {
   countries.registerLocale(deLocale);
 
   const [config, _setConfig] = useState({ ...getConfig(), counter: 0 });
-  const [, setCities] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
 
   const setConfig = (newConfig: Config) => {
     _setConfig({ ...newConfig, counter: config.counter + 1 });
@@ -74,7 +74,7 @@ index_file = rclone.php
   >([{ path: "/api", options: [] }]);
 
   const fetchCities = async (path: string, levelIndex: number) => {
-    const data = await cachedFetch(path);
+    const data = JSON.parse(await cachedFetch(path));
 
     if (Array.isArray(data)) {
       setRemoteCities((prev) => {

@@ -147,7 +147,6 @@ export function fromUrlParam(search: string): Config {
 export function toUrlParam(config: Config): string {
   const urlParams: string[] = [];
 
-  console.log(config);
   var initial = { ...Default };
 
 
