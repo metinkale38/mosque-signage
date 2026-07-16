@@ -1,6 +1,6 @@
 export function cachedFetch(url: string) {
   if (window.location.host === "metinkale38.github.io" && url.startsWith("/api"))
-    return fetch("https://opt.mk38.de/" + url.substring(5))
+    return fetch("https://opt.mk38.de" + url.substring(4))
       .then((response) =>response.text());
   if (!url.startsWith("http")) {
     return fetch(url).then((response) => response.text());

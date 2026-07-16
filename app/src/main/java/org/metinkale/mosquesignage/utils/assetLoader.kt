@@ -22,27 +22,7 @@ fun initAssetLoader(wv: WebView, context: Context) {
             view: WebView,
             request: WebResourceRequest
         ): WebResourceResponse? {
-            val url = request.url
-
-            if (url.host == "metinkale38.github.io") {
-                val path = url.path ?: ""
-                if (path == "/on") {
-                    SystemUtils.on()
-                    return createPlainTextResponse("OK")
-                }
-                if (path == "/off") {
-                    SystemUtils.off()
-                    return createPlainTextResponse("OK")
-                }
-            }
-
-            return assetLoader.shouldInterceptRequest(url)
+            return assetLoader.shouldInterceptRequest(request.url)
         }
     }
-
-
-}
-
-fun createPlainTextResponse(text: String): WebResourceResponse {
-    return WebResourceResponse("text/plain", "UTF-8", text.byteInputStream())
 }

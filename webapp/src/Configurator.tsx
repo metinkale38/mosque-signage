@@ -49,7 +49,7 @@ const Configurator = () => {
         {
           type: "SAVE_DATA",
           key: "config",
-          value: "http://localhost:8000" + toUrlParam(config),
+          value: "http://localhost:8000" + toUrlParam(config).replace("city=%2Fapi%2F", "city=https%3A%2F%2Fopt.mk38.de%2F"),
         },
         "*",
       );

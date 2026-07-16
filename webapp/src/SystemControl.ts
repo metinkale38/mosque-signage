@@ -4,22 +4,13 @@ export let SystemUtils = {
 
     on(): void {
       try{
-        let systemUtils = (window.top as any).systemUtils
-        if (systemUtils) {
-            systemUtils.on();
-        } else {
             fetch("http://localhost:8000/on").then(() => { }).catch(res => console.log(res));
-        }}catch(e){}
+      }catch(e){}
 
     },
     off(): void {
         try {
-            let systemUtils = (window.top as any).systemUtils
-            if (systemUtils) {
-                systemUtils.off();
-            } else {
-                fetch("http://localhost:8000/off").then(() => { }).catch(res => console.log(res));
-            }
+            fetch("http://localhost:8000/off").then(() => { }).catch(res => console.log(res));
         } catch (e) {}
     },
 
