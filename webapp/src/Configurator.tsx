@@ -17,13 +17,13 @@ const Configurator = () => {
   countries.registerLocale(deLocale);
 
   const [config, _setConfig] = useState({ ...getConfig(), counter: 0 });
-  const [cities, setCities] = useState<string[]>([]);
+  const [, setCities] = useState<string[]>([]);
 
   const setConfig = (newConfig: Config) => {
     _setConfig({ ...newConfig, counter: config.counter + 1 });
   };
 
-  // initialize with pi-signage message
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === "INIT_DATA") {
@@ -125,7 +125,7 @@ index_file = rclone.php
     fetchCities(newPath, levelIndex + 1);
   };
 
-  var tabIndex = 1;
+  let tabIndex = 1;
 
   return (
     <div className="m-8 mx-auto flex w-max flex-col gap-2 rounded-lg bg-white p-6 shadow-md">

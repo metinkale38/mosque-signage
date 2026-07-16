@@ -68,7 +68,7 @@ export const configs: Config[] = [
   {
     ...Default,
     config: "neustadt",
-    city: "/api/IGMG/DE/Neustadt/csv",
+    city: "./Neustadt.csv",
     bgColor: "#0069a8",
   },
   {
