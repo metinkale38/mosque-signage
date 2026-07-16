@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "org.metinkale.mosquesignage"
-    compileSdk = 35
+    compileSdk = 36
 
     flavorDimensions("default")
     productFlavors {

@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Config, configs, Default, fromUrlParam, getConfig, toUrlParam } from "./prayertimes/config";
+import {
+  Config,
+  configs,
+  Default,
+  fromUrlParam,
+  getConfig,
+  toUrlParam,
+} from "./prayertimes/config";
 import { Text } from "./LocalizedText";
 import countries from "i18n-iso-countries";
 import deLocale from "i18n-iso-countries/langs/de.json";
@@ -21,7 +28,12 @@ const Configurator = () => {
       if (event.data.type === "INIT_DATA") {
         const newConfig = event.data.data.config;
         if (typeof newConfig === "string") {
-          _setConfig({...fromUrlParam(newConfig.substring(newConfig.lastIndexOf("?")+1)), counter: 0});
+          _setConfig({
+            ...fromUrlParam(
+              newConfig.substring(newConfig.lastIndexOf("?") + 1),
+            ),
+            counter: 0,
+          });
         }
       }
     };
@@ -32,27 +44,33 @@ const Configurator = () => {
   // send back config to pi-signage
   useEffect(() => {
     if (config.counter > 0) {
-      window.parent.postMessage({
-        type: "SAVE_DATA",
-        key: "config",
-        value: "http://localhost:8000" + toUrlParam(config)
-      }, "*");
-      window.parent.postMessage({
-        type: "SAVE_DATA",
-        key: "rclone",
-        value: `
+      window.parent.postMessage(
+        {
+          type: "SAVE_DATA",
+          key: "config",
+          value: "http://localhost:8000" + toUrlParam(config),
+        },
+        "*",
+      );
+      window.parent.postMessage(
+        {
+          type: "SAVE_DATA",
+          key: "rclone",
+          value: `
 [remote]
 type = http
 url = https://metinkale38.github.io/mosque-signage/
 index_file = rclone.php
-#rclone-opts=--files-from-raw <(curl -s --connect-timeout 5 --max-time 10 https://metinkale38.github.io/mosque-signage/rclone.txt | awk '{print $2}') --size-only --no-traverse`
-      }, "*");
+#rclone-opts=--files-from-raw <(curl -s --connect-timeout 5 --max-time 10 https://metinkale38.github.io/mosque-signage/rclone.txt | awk '{print $2}') --size-only --no-traverse`,
+        },
+        "*",
+      );
     }
   }, [config]);
 
-  const [remoteCities, setRemoteCities] = useState<{ path: string; options: string[]; selected?: string }[]>([
-    { path: "/api", options: [] }
-  ]);
+  const [remoteCities, setRemoteCities] = useState<
+    { path: string; options: string[]; selected?: string }[]
+  >([{ path: "/api", options: [] }]);
 
   const fetchCities = async (path: string, levelIndex: number) => {
     const res = await fetch(path);
@@ -72,23 +90,28 @@ index_file = rclone.php
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("hash.php");
-      const lines = (await response.text()).split("\n").map(txt => "." + txt.split("=")[0]).filter(file => file.includes(".csv"));
+      const lines = (await response.text())
+        .split("\n")
+        .map((txt) => "." + txt.split("=")[0])
+        .filter((file) => file.includes(".csv"));
       setCities(lines);
     };
 
     fetchData();
   }, []);
 
-
-  useEffect(() => {
-    // Cors is only enabled for Github, other Servers have to proxy themselves
-    if (window.location.host === "metinkale38.github.io")
-      fetchCities("https://opt.mk38.de", 0);
-    else
-      fetchCities("/api", 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [/*Do not add fetchCities*/]);
-
+  useEffect(
+    () => {
+      // Cors is only enabled for Github, other Servers have to proxy themselves
+      if (window.location.host === "metinkale38.github.io")
+        fetchCities("https://opt.mk38.de", 0);
+      else fetchCities("/api", 0);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [
+      /*Do not add fetchCities*/
+    ],
+  );
 
   useEffect(() => {
     SystemUtils.setConfig(toUrlParam(config).substring(1));
@@ -105,82 +128,80 @@ index_file = rclone.php
     fetchCities(newPath, levelIndex + 1);
   };
 
-
   var tabIndex = 1;
 
-
   return (
-    <div className="p-6  m-8  w-max mx-auto bg-white shadow-md rounded-lg flex flex-col gap-2">
-      <h2 className="text-xl font-bold mb-4">Konfigurator</h2>
+    <div className="m-8 mx-auto flex w-max flex-col gap-2 rounded-lg bg-white p-6 shadow-md">
+      <h2 className="mb-4 text-xl font-bold">Konfigurator</h2>
 
-      {SystemUtils.getFlavor() === "playstore" ? <></> :
+      {SystemUtils.getFlavor() === "playstore" ? (
+        <></>
+      ) : (
         <>
-          <label className="block mb-1">Config (optional)</label>
+          <label className="mb-1 block">Vorlage</label>
           <select
             name="config"
             value={config.config}
             tabIndex={tabIndex++}
-            onChange={(e) => setConfig({ ...(configs.find((c) => c.config === e.target.value) || Default) })}
-            className="w-full p-2 border rounded mb-2">
+            onChange={(e) =>
+              setConfig({
+                ...(configs.find((c) => c.config === e.target.value) ||
+                  Default),
+              })
+            }
+            className="mb-2 w-full rounded border p-2"
+          >
             <option value={undefined}>Default</option>
             {configs.map((config) => (
-              <option key={config.config} value={config.config}>{config.config}</option>
+              <option key={config.config} value={config.config}>
+                {config.config}
+              </option>
             ))}
           </select>
-        </>}
+        </>
+      )}
 
-
-      <label className="block mb-1">Stadt</label>
-
-      {SystemUtils.getFlavor() === "playstore" ? <></> :
-        <>
-          <select
-            name="city"
-            value={config.city}
-            tabIndex={tabIndex++}
-            onChange={(e) => {
-              if (e.target.value in cities) setConfig({ ...config, city: e.target.value });
-            }}
-            className="w-full p-2 border rounded mb-2">
-            <option key={config.city} value={config.city}>{config.city}</option>
-            {cities.filter((c) => c !== config.city).map((city) => (
-              <option key={city} value={city}>{city}</option>
-            ))}
-
-
-          </select>
-        </>}
+      <label className="mb-1 block">Stadt</label>
+      <input readOnly={true} value={config.city} />
 
       {remoteCities.map((level, index) => (
         <select
           tabIndex={tabIndex++}
           key={index}
-          className="w-full p-2 border rounded mb-2"
-          onChange={(e) => handleSelectChange(index, e.target.value)}>
-          <option key={undefined}
-                  value={undefined}>{SystemUtils.getFlavor() === "playstore" ? "Stadt wählen" : "Andere wählen"}</option>
-          {
-            level.options.filter((c) => c !== config.city && c !== "Calc" && c !== "CSV").map((city) => (
-              <option key={city} value={city}>{index === 1 ? countries.getName(city, "de") : city}</option>
-            ))
-          }
-
+          className="mb-2 w-full rounded border p-2"
+          onChange={(e) => handleSelectChange(index, e.target.value)}
+        >
+          <option key={undefined} value={undefined}>
+            {SystemUtils.getFlavor() === "playstore"
+              ? "Stadt wählen"
+              : "Andere wählen"}
+          </option>
+          {level.options
+            .filter((c) => c !== config.city && c !== "Calc" && c !== "CSV")
+            .map((city) => (
+              <option key={city} value={city}>
+                {index === 1 ? countries.getName(city, "de") : city}
+              </option>
+            ))}
         </select>
-      ))
-      }
+      ))}
 
-      <label className="block mb-1">Sprachen</label>
-      <div className="flex flex-col space-y-2 mt-2">
+      <label className="mb-1 block">Sprachen</label>
+      <div className="mt-2 flex flex-col space-y-2">
         {Object.keys(Text.PrayerTimes.FAJR).map((lang, idx) => (
           <label key={idx} className="flex items-center space-x-2">
             <input
               type="checkbox"
               name={lang}
               checked={config.languages.includes(lang)}
-              onChange={(e) => setConfig({
-                ...config,
-                languages: e.target.checked ? [...config.languages, lang] : config.languages.filter((l) => l !== lang)
-              })}
+              onChange={(e) =>
+                setConfig({
+                  ...config,
+                  languages: e.target.checked
+                    ? [...config.languages, lang]
+                    : config.languages.filter((l) => l !== lang),
+                })
+              }
               tabIndex={tabIndex++}
             />
             <span>{lang.toUpperCase()}</span>
@@ -188,23 +209,22 @@ index_file = rclone.php
         ))}
       </div>
 
-
-      <label className="block mb-1">Hintergrundfarbe</label>
+      <label className="mb-1 block">Hintergrundfarbe</label>
       <input
         name="bgColor"
         value={config.bgColor}
         onChange={(e) => setConfig({ ...config, bgColor: e.target.value })}
-        className="w-full p-2 border rounded mb-2"
+        className="mb-2 w-full rounded border p-2"
         type="color"
         tabIndex={tabIndex++}
       />
 
-      <label className="block mb-1">Stil</label>
+      <label className="mb-1 block">Stil</label>
       <select
         name="style"
         value={config.style}
         onChange={(e) => setConfig({ ...config, style: e.target.value })}
-        className="w-full p-2 border rounded mb-2"
+        className="mb-2 w-full rounded border p-2"
         tabIndex={tabIndex++}
       >
         <option value="primary">Primary</option>
@@ -215,8 +235,9 @@ index_file = rclone.php
         <input
           type="checkbox"
           checked={config.showHighlight}
-
-          onChange={(e) => setConfig({ ...config, showHighlight: e.target.checked })}
+          onChange={(e) =>
+            setConfig({ ...config, showHighlight: e.target.checked })
+          }
           tabIndex={tabIndex++}
         />
         <span>Hervorhebung während der Gebetszeit</span>
@@ -226,7 +247,9 @@ index_file = rclone.php
         <input
           type="checkbox"
           checked={config.showHighlightAlways}
-          onChange={(e) => setConfig({ ...config, showHighlightAlways: e.target.checked })}
+          onChange={(e) =>
+            setConfig({ ...config, showHighlightAlways: e.target.checked })
+          }
           tabIndex={tabIndex++}
         />
         <span>Hebe Gebetszeit immer vor</span>
@@ -236,73 +259,94 @@ index_file = rclone.php
         <input
           type="checkbox"
           checked={config.showSpecialDays}
-          onChange={(e) => setConfig({ ...config, showSpecialDays: e.target.checked })}
+          onChange={(e) =>
+            setConfig({ ...config, showSpecialDays: e.target.checked })
+          }
           tabIndex={tabIndex++}
         />
         <span>Zeige Religiöse Tage</span>
       </label>
 
-
       <label className="flex items-center space-x-2">
         <input
           type="checkbox"
           checked={config.screenOnOff}
-          onChange={(e) => setConfig({ ...config, screenOnOff: e.target.checked })}
+          onChange={(e) =>
+            setConfig({ ...config, screenOnOff: e.target.checked })
+          }
           tabIndex={tabIndex++}
         />
         <span>Automatisches Ein-/Ausschalten</span>
       </label>
 
-      <label className="block mb-1">Abweichendes Freitagsgebet zur Sommerzeit (z.B. 14:30)</label>
+      <label className="mb-1 block">
+        Abweichendes Freitagsgebet zur Sommerzeit (z.B. 14:30)
+      </label>
       <input
         type="text"
         name="cumaSummer"
         value={config.cumaSummer || ""}
         onChange={(e) => setConfig({ ...config, cumaSummer: e.target.value })}
-        className="w-full p-2 border rounded mb-2"
+        className="mb-2 w-full rounded border p-2"
         placeholder="HH:MM"
         tabIndex={tabIndex++}
       />
 
-      <label className="block mb-1">Abweichendes Freitagsgebet zur Winterzeit (z.B. 13:00)</label>
+      <label className="mb-1 block">
+        Abweichendes Freitagsgebet zur Winterzeit (z.B. 13:00)
+      </label>
       <input
         type="text"
         name="cumaWinter"
         value={config.cumaWinter || ""}
         onChange={(e) => setConfig({ ...config, cumaWinter: e.target.value })}
-        className="w-full p-2 border rounded mb-2"
+        className="mb-2 w-full rounded border p-2"
         placeholder="HH:MM"
         tabIndex={tabIndex++}
       />
 
-      <label className="block mb-1">Morgengebet (-30: Halbe Stunde vor Sonnenaufgang, 15: 15min nach Fajr)</label>
+      <label className="mb-1 block">
+        Morgengebet (-30: Halbe Stunde vor Sonnenaufgang, 15: 15min nach Fajr)
+      </label>
       <input
         type="text"
         name="sabah"
         value={config.sabah || ""}
-        onChange={(e) => setConfig({ ...config, sabah: parseInt(e.target.value) })}
-        className="w-full p-2 border rounded mb-2"
+        onChange={(e) =>
+          setConfig({ ...config, sabah: parseInt(e.target.value) })
+        }
+        className="mb-2 w-full rounded border p-2"
         placeholder="Zahl eingeben"
         tabIndex={tabIndex++}
       />
 
-      <label className="block mb-1">Morgengebet Ramadan (-30: Halbe Stunde vor Sonnenaufgang, 15: 15min nach
-        Fajr)</label>
+      <label className="mb-1 block">
+        Morgengebet Ramadan (-30: Halbe Stunde vor Sonnenaufgang, 15: 15min nach
+        Fajr)
+      </label>
       <input
         type="text"
         name="sabahRamadan"
         value={config.sabahRamadan || ""}
-        onChange={(e) => setConfig({ ...config, sabahRamadan: parseInt(e.target.value) })}
-        className="w-full p-2 border rounded mb-2"
+        onChange={(e) =>
+          setConfig({ ...config, sabahRamadan: parseInt(e.target.value) })
+        }
+        className="mb-2 w-full rounded border p-2"
         placeholder="Zahl eingeben"
         tabIndex={tabIndex++}
       />
 
-
       <div className="mt-4">
         <span className="text-sm text-gray-500">Generierte URL:</span>
-        <a target="_blank" rel="noreferrer" href={window.location.href.split("?")[0] + toUrlParam(config)}><p
-          className="break-all text-blue-600">{window.location.href.split("?")[0] + toUrlParam(config)}</p></a>
+        <a
+          target="_blank"
+          rel="noreferrer"
+          href={window.location.href.split("?")[0] + toUrlParam(config)}
+        >
+          <p className="break-all text-blue-600">
+            {window.location.href.split("?")[0] + toUrlParam(config)}
+          </p>
+        </a>
       </div>
     </div>
   );
