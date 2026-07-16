@@ -14,6 +14,7 @@ activityCompose = "1.8.0"
 material = "1.10.0"
 activity = "1.10.1"
 kotlinGradlePlugin = "2.0.0"
+webkit = "1.16.0"
 
 [libraries]
 adblib = { module = "com.tananaev:adblib", version.ref = "adblib" }
@@ -35,6 +36,7 @@ nanohttpd = { module = "org.nanohttpd:nanohttpd", version.ref = "nanohttpdVersio
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
+androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

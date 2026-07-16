@@ -10,6 +10,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import org.metinkale.mosquesignage.utils.BackgroundHelper
 import org.metinkale.mosquesignage.utils.SystemUtils
+import org.metinkale.mosquesignage.utils.initAssetLoader
 
 class AdvancedConfig : AppCompatActivity() {
 
@@ -17,7 +18,7 @@ class AdvancedConfig : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         BackgroundHelper.start { recreate() }
         val webView = WebView(this)
-        webView.webViewClient = WebViewClient()
+        initAssetLoader(webView, this)
         webView.webChromeClient = object : WebChromeClient() {
             override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
                 Log.e("WebView", consoleMessage.message());
@@ -28,7 +29,7 @@ class AdvancedConfig : AppCompatActivity() {
         webView.settings.javaScriptEnabled = true
         webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.addJavascriptInterface(SystemUtils, "systemUtils")
-        webView.loadUrl("http://localhost:8080/?page=config&" + App.config)
+        webView.loadUrl("https://metinkale38.github.io/index.html?page=config&" + App.config)
         setContentView(webView)
 
     }

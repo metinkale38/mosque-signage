@@ -11,8 +11,7 @@ object BackgroundHelper {
 
     private val handler = Handler()
     private val www: File by lazy { File(App.ctx.filesDir, "www") }
-    private val webServer: WebServer by lazy { WebServer(www) }
-    private lateinit var syncAsync: Runnable
+    private var syncAsync: Runnable
     private var restartAfterUpdate: () -> Unit = {}
 
 
@@ -35,14 +34,12 @@ object BackgroundHelper {
 
     fun start(restartAfterUpdate: () -> Unit) {
         Log.e("BackgroundHelper", "start")
-        webServer.start()
         syncAsync.run()
         BackgroundHelper.restartAfterUpdate = restartAfterUpdate
     }
 
     fun stop() {
         Log.e("BackgroundHelper", "stop")
-        webServer.stop()
         handler.removeCallbacks(syncAsync)
         restartAfterUpdate = {}
     }

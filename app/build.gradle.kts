@@ -34,9 +34,9 @@ android {
 
     defaultConfig {
         applicationId = "org.metinkale.mosquesignage"
-        minSdk = 21
+        minSdk = 24
         targetSdk = 36
-        versionCode = 14
+        versionCode = 15
         versionName = "1.0"
         kotlinOptions {
             freeCompilerArgs += "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi"
@@ -99,6 +99,7 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.adblib)
     implementation(libs.nanohttpd)
+    implementation(libs.androidx.webkit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)

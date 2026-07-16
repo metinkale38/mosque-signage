@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import android.view.View
-import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import android.webkit.ConsoleMessage
 import android.webkit.WebChromeClient
@@ -12,6 +11,7 @@ import android.webkit.WebView
 import android.widget.LinearLayout
 import org.metinkale.mosquesignage.utils.SystemUtils
 import kotlin.apply
+import org.metinkale.mosquesignage.utils.initAssetLoader
 
 
 fun Context.SignageWebView(): View =
@@ -22,6 +22,7 @@ fun Context.SignageWebView(): View =
 
 
         addView(object : WebView(this@SignageWebView) {
+
             override fun onMeasure(
                 widthMeasureSpec: Int,
                 heightMeasureSpec: Int
@@ -52,6 +53,7 @@ fun Context.SignageWebView(): View =
                 }
             }
         }.apply {
+            initAssetLoader(this, this@SignageWebView)
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             )
@@ -67,6 +69,6 @@ fun Context.SignageWebView(): View =
             settings.mediaPlaybackRequiresUserGesture = false
 
             addJavascriptInterface(SystemUtils, "systemUtils")
-            loadUrl("http://localhost:8080/?${App.config}&page=${App.page}")
+            loadUrl("https://metinkale38.github.io/index.html?${App.config}&page=${App.page}")
         })
     }
