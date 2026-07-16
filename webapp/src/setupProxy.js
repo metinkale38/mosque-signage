@@ -4,7 +4,7 @@ module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'https://opt.mk38.dev',
+            target: 'https://opt.mk38.de',
             changeOrigin: true,
             pathRewrite: { '^/api': '' }
         })

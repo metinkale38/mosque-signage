@@ -68,7 +68,7 @@ export const configs: Config[] = [
   {
     ...Default,
     config: "neustadt",
-    city: "./Neustadt.csv",
+    city: "/api/IGMG/DE/Neustadt/csv",
     bgColor: "#0069a8",
   },
   {
@@ -147,15 +147,12 @@ export function fromUrlParam(search: string): Config {
 export function toUrlParam(config: Config): string {
   const urlParams: string[] = [];
 
+  console.log(config);
   var initial = { ...Default };
-  for (let c of configs) {
-    if (c.config === config.config) {
-      initial = { ...c };
-    }
-  }
+
 
   for (const key in config) {
-    if (config.hasOwnProperty(key) && key !== "page" && key !== "counter") {
+    if (config.hasOwnProperty(key) && key !== "page" && key !== "counter" && key !== "config") {
       var value = (config as any)[key];
       const defaultValue = (initial as any)[key];
 

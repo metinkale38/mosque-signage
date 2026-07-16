@@ -83,7 +83,7 @@ index_file = rclone.php
   useEffect(() => {
     // Cors is only enabled for Github, other Servers have to proxy themselves
     if (window.location.host === "metinkale38.github.io")
-      fetchCities("https://opt.mk38.dev", 0);
+      fetchCities("https://opt.mk38.de", 0);
     else
       fetchCities("/api", 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps

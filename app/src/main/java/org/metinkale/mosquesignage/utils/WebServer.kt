@@ -36,7 +36,7 @@ class WebServer(val www: File) : NanoHTTPD("0.0.0.0", 8080) {
     }
 
     private fun handleProxyRequest(session: IHTTPSession): Response {
-        val targetUrl = "https://opt.mk38.dev" + session.uri.removePrefix("/api")
+        val targetUrl = "https://opt.mk38.de" + session.uri.removePrefix("/api")
 
         try {
             val url = URL(targetUrl)
