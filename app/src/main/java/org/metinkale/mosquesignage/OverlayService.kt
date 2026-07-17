@@ -24,7 +24,6 @@ import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.metinkale.mosquesignage.utils.BackgroundHelper
 import org.metinkale.mosquesignage.utils.SystemUtils
 import java.util.Calendar
 
@@ -42,8 +41,6 @@ class OverlayService : Service() {
         super.onCreate()
         Log.e("OverlayService", "onCreate")
         App.autostart = true
-
-        BackgroundHelper.start { restart(App.ctx) }
 
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -135,7 +132,6 @@ class OverlayService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         running = false
-        BackgroundHelper.stop()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             stopForeground(STOP_FOREGROUND_REMOVE)

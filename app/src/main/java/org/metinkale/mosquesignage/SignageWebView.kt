@@ -10,8 +10,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.LinearLayout
 import org.metinkale.mosquesignage.utils.SystemUtils
-import kotlin.apply
-import org.metinkale.mosquesignage.utils.initAssetLoader
+import java.io.File
 
 
 fun Context.SignageWebView(): View =
@@ -22,6 +21,7 @@ fun Context.SignageWebView(): View =
 
 
         addView(object : WebView(this@SignageWebView) {
+
 
             override fun onMeasure(
                 widthMeasureSpec: Int,
@@ -53,10 +53,11 @@ fun Context.SignageWebView(): View =
                 }
             }
         }.apply {
-            initAssetLoader(this, this@SignageWebView)
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             )
+
+            webViewClient = CachedWebViewClient()
 
             webChromeClient = object : WebChromeClient() {
                 override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
@@ -69,6 +70,6 @@ fun Context.SignageWebView(): View =
             settings.mediaPlaybackRequiresUserGesture = false
 
             addJavascriptInterface(SystemUtils, "systemUtils")
-            loadUrl("https://metinkale38.github.io/index.html?${App.config}&page=${App.page}")
+            loadUrl("https://metinkale38.github.io/mosque-signage/?${App.config}&page=${App.page}")
         })
     }

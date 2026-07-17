@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.adblib)
     implementation(libs.nanohttpd)
     implementation(libs.androidx.webkit)
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
